@@ -71,7 +71,7 @@ function openTool(id,updateUrl=true){
   runnerDescription.textContent=t.description;
   panel.innerHTML=templates(id);
   runner.hidden=false;runner.classList.add("visible");
-  document.body.classList.add("tool-focus-mode");
+  document.body.classList.add("tool-focus-mode","tool-active-page");
   if(updateUrl)history.replaceState(null,"","/tools.html?tool="+encodeURIComponent(id));
   panel.querySelectorAll("[data-action]").forEach(el=>el.addEventListener("click",()=>run(id,el.dataset.action)));
   panel.querySelector("#copyButton")?.addEventListener("click",copyResult);
@@ -86,7 +86,7 @@ function openTool(id,updateUrl=true){
 
 function closeTool(updateUrl=true){
   runner.classList.remove("visible");runner.hidden=true;
-  document.body.classList.remove("tool-focus-mode");
+  document.body.classList.remove("tool-focus-mode","tool-active-page");
   if(updateUrl)history.replaceState(null,"","/tools.html");
   search.focus();
 }

@@ -24,7 +24,7 @@ async function loadUtility() {
   assert.equal(operations["rgb-to-hex"]("255 136 0"), "#ff8800");
   assert.equal(operations["percentage-change-calculator"]("100 125"), "25%");
   assert.equal(operations["ratio-calculator"]("20 30"), "2:3");
-  assert.equal(operations["gcd-lcm-calculator"]("12 18"), "gcd: 6\\nlcm: 36");
+  assert.equal(operations["gcd-lcm-calculator"]("12 18"), "gcd: 6\nlcm: 36");
 
   const random = operations["random-string-generator"]("32");
   assert.equal(random.length, 32);
@@ -33,7 +33,7 @@ async function loadUtility() {
   const password = operations["random-password-generator"]();
   assert.equal(password.length, 20);
 
-  assert.equal(operations["remove-line-breaks"]("a\\n  b"), "a b");
+  assert.equal(operations["remove-line-breaks"]("a\n  b"), "a b");
   assert.equal(operations["reading-time-calculator"]("one two three"), "1 min (3 words)");
 
   console.log("Utility functional tests passed");

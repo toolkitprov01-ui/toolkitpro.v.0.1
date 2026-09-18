@@ -45,3 +45,32 @@
   .tool-focus-mode .tools-main{padding-top:18px}
   .result-head{align-items:flex-start}
 }
+
+/* v0.4 — true single-page tool workspace */
+body.tool-active-page .tools-hero{display:none}
+body.tool-active-page .tools-main{padding:22px 0 70px;min-height:calc(100vh - 150px)}
+body.tool-active-page .tools-toolbar{max-width:980px;margin:0 auto 14px}
+body.tool-active-page .tools-toolbar h2{font-size:1rem;color:var(--text-secondary)}
+body.tool-active-page .tools-toolbar p{display:none}
+body.tool-active-page .tools-shell{display:block;max-width:980px;margin:0 auto}
+body.tool-active-page .tools-sidebar,
+body.tool-active-page .tool-cards{display:none}
+body.tool-active-page .tool-runner{display:block;margin:0;padding:30px;min-height:520px;border-radius:22px;box-shadow:0 18px 60px rgba(15,23,42,.10)}
+body.tool-active-page .tool-runner:before{height:4px}
+body.tool-active-page .runner-head{padding-bottom:20px;border-bottom:1px solid var(--border);margin-bottom:24px}
+body.tool-active-page .runner-head h2{font-size:clamp(1.45rem,3vw,2rem)}
+body.tool-active-page .tool-runner .field{max-width:900px}
+body.tool-active-page .tool-runner textarea{min-height:240px}
+body.tool-active-page .tool-runner .result-wrap{max-width:900px}
+body.tool-active-page .tool-runner .actions{max-width:900px}
+body.tool-active-page .runner-close{width:auto;padding:0 12px;min-width:40px}
+body.tool-active-page .runner-close:after{content:" সব টুলস";font:700 .76rem 'Hind Siliguri',sans-serif;margin-left:5px}
+@media(max-width:700px){
+  body.tool-active-page .tools-main{padding:12px 0 45px}
+  body.tool-active-page .tools-toolbar{margin-bottom:10px}
+  body.tool-active-page .tools-toolbar h2{font-size:.85rem}
+  body.tool-active-page .tool-runner{padding:20px 16px;border-radius:16px;min-height:0}
+  body.tool-active-page .runner-head{gap:10px}
+  body.tool-active-page .runner-head h2{font-size:1.25rem}
+  body.tool-active-page .tool-runner textarea{min-height:190px}
+}

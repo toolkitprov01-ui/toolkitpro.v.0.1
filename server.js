@@ -39,7 +39,23 @@ app.disable("x-powered-by");
 app.use(helmet({ contentSecurityPolicy: false }));
 app.use(express.json({ limit: "1mb" }));
 
-async function registryTools() {\n  if (getDatabaseInfo().configured) {\n    try { const tools = await listTools(); if (Array.isArray(tools) && tools.length) return tools; }\n    catch (error) { console.error("Registry database read failed:", error.message); }\n  }\n  return getAllTools();\n}\n\nasync function registryTool(id) {\n  if (getDatabaseInfo().configured) {\n    try { const tool = await getTool(id); if (tool) return tool; }\n    catch (error) { console.error("Registry database lookup failed:", error.message); }\n  }\n  return getToolById(id);\n}\n\napp.get("/api/search", async (req, res) => {
+async function registryTools() {
+  if (getDatabaseInfo().configured) {
+    try { const tools = await listTools(); if (Array.isArray(tools) && tools.length) return tools; }
+    catch (error) { console.error("Registry database read failed:", error.message); }
+  }
+  return getAllTools();
+}
+
+async function registryTool(id) {
+  if (getDatabaseInfo().configured) {
+    try { const tool = await getTool(id); if (tool) return tool; }
+    catch (error) { console.error("Registry database lookup failed:", error.message); }
+  }
+  return getToolById(id);
+}
+
+app.get("/api/search", async (req, res) => {
   const q = String(req.query.q || "").trim().toLowerCase();
   const category = String(req.query.category || "").trim().toLowerCase();
   const limit = Math.min(Math.max(Number(req.query.limit) || 24, 1), 100);
@@ -73,8 +89,13 @@ app.get("/sitemap.xml", (req,res) => {
   const staticUrls = ["/","/tools.html","/privacy.html","/terms.html","/disclaimer.html"];
   const toolUrls = (await registryTools()).map(tool => "/tool/" + encodeURIComponent(tool.id));
   const urls = [...staticUrls, ...toolUrls];
-  const xml = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
-    urls.map(url => "  <url><loc>" + SITE_URL + url + "</loc></url>").join("\n") + "\n</urlset>\n";
+  const xml = '<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+' +
+    urls.map(url => "  <url><loc>" + SITE_URL + url + "</loc></url>").join("
+") + "
+</urlset>
+";
   cacheSet("sitemap", xml, 3_600_000);
   res.type("application/xml").set("Cache-Control","public, max-age=3600").send(xml);
 });

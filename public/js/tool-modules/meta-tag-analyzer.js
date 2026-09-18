@@ -1,0 +1,4 @@
+const V="2026.09.18.17";
+export function render(){return '<div class="tool-form"><textarea id="mtI" rows="14" placeholder="HTML source paste করুন…"></textarea><button class="primary" id="mtG">Analyze meta tags</button><div id="mtO" class="seo-results"></div></div>'}
+export function mount(){const q=id=>document.getElementById(id);q("mtG").onclick=()=>{const d=new DOMParser().parseFromString(q("mtI").value,"text/html"),checks=[["Title",!!d.title?.trim()],["Meta description",!!d.querySelector('meta[name="description"]')],["Viewport",!!d.querySelector('meta[name="viewport"]')],["Canonical",!!d.querySelector('link[rel="canonical"]')],["Robots",!!d.querySelector('meta[name="robots"]')],["Open Graph",!!d.querySelector('meta[property^="og:"]')]];q("mtO").innerHTML=checks.map(x=>'<div class="seo-check '+(x[1]?'ok':'warn')+'"><strong>'+x[0]+'</strong><span>'+(x[1]?'Found':'Missing')+'</span></div>').join("")}}
+export {V as MODULE_VERSION};

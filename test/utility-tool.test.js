@@ -107,7 +107,14 @@ async function loadUtility() {
   assert.equal(
     operations["csv-to-json"](quotedCsv),
     '[\\n  {\\n    "name": "Alice",\\n    "note": "hello, world"\\n  }\\n]'
-  );\n  console.log("Utility functional tests passed");
+  );\n  const wordCounterSource = require("node:fs").readFileSync(
+    require("node:path").join(__dirname, "..", "public", "js", "tool-modules", "word-counter.js"),
+    "utf8"
+  );
+  const wordCounter = await import("data:text/javascript;charset=utf-8," + encodeURIComponent(wordCounterSource));
+  assert.equal(wordCounter.render().includes("wcSentences"), true);
+
+  console.log("Utility functional tests passed");
 })().catch(error => {
   console.error(error);
   process.exit(1);

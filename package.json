@@ -4,7 +4,13 @@
   "private":true,
   "description":"Toolkit Pro - simple free online tools",
   "main":"server.js",
-  "scripts":{"start":"node server.js","test":"node --check server.js"},
+  "scripts":{
+    "start":"node server.js",
+    "test":"node --check server.js"
+  },
   "engines":{"node":">=20"},
-  "dependencies":{"express":"^5.1.0","helmet":"^8.1.0"}
+  "dependencies":{
+    "express":"^5.1.0",
+    "helmet":"^8.1.0"
+  }
 }

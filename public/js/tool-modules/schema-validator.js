@@ -1,0 +1,4 @@
+const V="2026.09.18.17";
+export function render(){return '<div class="tool-form"><textarea id="svI" rows="14" placeholder="JSON-LD বা JSON paste করুন…"></textarea><button class="primary" id="svG">Validate JSON</button><div id="svO" class="seo-results"></div></div>'}
+export function mount(){const q=id=>document.getElementById(id);q("svG").onclick=()=>{try{const o=JSON.parse(q("svI").value),types=Array.isArray(o)?o.map(x=>x?.["@type"]).filter(Boolean):[o?.["@type"]].filter(Boolean);q("svO").innerHTML='<div class="seo-check ok"><strong>Valid JSON</strong><span>Schema type: '+(types.join(", ")||"Not specified")+'</span></div><div class="seo-notes">This checks JSON syntax and reports @type; it does not verify every schema.org property.</div>'}catch{q("svO").innerHTML='<div class="seo-check warn"><strong>Invalid JSON</strong><span>Check commas, quotes, brackets and JSON-LD syntax.</span></div>'}}}
+export {V as MODULE_VERSION};

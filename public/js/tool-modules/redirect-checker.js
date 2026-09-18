@@ -1,0 +1,4 @@
+const V="2026.09.18.16";
+export function render(){return '<div class="tool-form"><input id="rcU" type="url" placeholder="https://example.com/old-url"><button class="primary" id="rcG">Check redirect</button><div id="rcO" class="seo-results"></div></div>'}
+export async function mount(){const q=id=>document.getElementById(id);q("rcG").onclick=async()=>{const u=q("rcU").value.trim();if(!u)return;q("rcO").innerHTML="<div class=\"seo-notes\">Checking…</div>";try{const r=await fetch(u,{method:"HEAD",redirect:"manual",mode:"cors"});q("rcO").innerHTML='<div class="seo-check ok"><strong>Response: '+r.status+'</strong><span>Browser redirect visibility depends on CORS and redirect policy.</span></div>'}catch{q("rcO").innerHTML='<div class="seo-check warn"><strong>Could not inspect redirect</strong><span>The target may block browser requests. This is not a definitive redirect result.</span></div>'}}}
+export {V as MODULE_VERSION};

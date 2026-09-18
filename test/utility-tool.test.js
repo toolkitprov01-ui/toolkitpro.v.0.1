@@ -69,6 +69,35 @@ async function loadUtility() {
     assert.equal(operations[id](input), expected, `fixture failed: ${id}`);
   }
 
+
+  const textFixtures = [
+    ["text-to-uppercase","hello world","HELLO WORLD"],
+    ["text-to-lowercase","Hello WORLD","hello world"],
+    ["text-reverser","abc","cba"],
+    ["remove-extra-spaces","  hello   world  ","hello world"],
+    ["remove-duplicate-lines","a\nb\na","a\nb"],
+    ["line-counter","a\nb\nc","3"],
+    ["sentence-counter","One. Two! Three?","3"],
+    ["paragraph-counter","a\n\nb\n\n c","3"],
+    ["whitespace-counter","a b\n","3"],
+    ["text-to-slug","Hello World!","hello-world"],
+    ["url-encoder","hello world","hello%20world"],
+    ["url-decoder","hello%20world","hello world"],
+    ["json-minifier","{\"a\": 1}","{\"a\":1}"],
+    ["json-validator","{\"ok\":true}","Valid JSON"],
+    ["number-base-converter","10","decimal: 10\nbinary: 1010\nhex: a"],
+    ["days-to-hours","2","48"],
+    ["hours-to-minutes","2","120"],
+    ["minutes-to-seconds","2","120"]
+  ];
+  for (const [id,input,expected] of textFixtures) {
+    assert.equal(operations[id](input), expected, `text fixture failed: ${id}`);
+  }
+  assert.equal(await operations["sha1-hash"]("abc"), "a9993e364706816aba3e25717850c26c9cd0d89d");
+  assert.equal(await operations["sha512-hash"]("abc"), "ddaf35a193617abacc417349ae20413112e6fa4e89a97ea20a9eeee64b55d39a2192992a274fc1a836ba3c23a3feebbd454d4423643ce80e2a9ac94fa54ca49f");
+  assert.equal(operations["json-to-csv"]("[{\"a\":1,\"b\":2}]"), "\"a\",\"b\"\n\"1\",\"2\"");
+  assert.equal(operations["csv-to-json"]("a,b\n1,2"), "[\n  {\n    \"a\": \"1\",\n    \"b\": \"2\"\n  }\n]");
+
   console.log("Utility functional tests passed");
 })().catch(error => {
   console.error(error);

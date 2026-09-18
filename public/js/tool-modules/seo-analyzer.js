@@ -46,15 +46,15 @@ export function mount(){
     const descOk=descLen>=120&&descLen<=160;
 
     results.innerHTML=[
-      check("Title","x",`${titleLen} অক্ষর — ${title?esc(title):"পাওয়া যায়নি"}`),
-      check("Meta description","x",`${descLen} অক্ষর — ${description?esc(description):"পাওয়া যায়নি"}`),
+      check("Title",titleOk,`${titleLen} অক্ষর — ${title?title:"পাওয়া যায়নি"}`),
+      check("Meta description",descOk,`${descLen} অক্ষর — ${description?description:"পাওয়া যায়নি"}`),
       check("Canonical",canonical,"Canonical URL পাওয়া গেছে"),
       check("H1",h1===1,`${h1}টি H1 পাওয়া গেছে`),
       check("Image alt",images.length===0||missingAlt===0,`${images.length}টি image, ${missingAlt}টিতে alt অনুপস্থিত`),
       check("Open Graph",ogTitle&&ogDescription,"og:title ও og:description আছে"),
       check("Viewport",viewport,"Mobile viewport meta আছে"),
       check("HTML lang",lang,`lang="${lang||"অনুপস্থিত"}"`),
-      check("Robots",robots!=="noindex","robots: ${robots||"নির্দিষ্ট করা হয়নি"}`)
+      check("Robots",robots.toLowerCase()!=="noindex","robots: "+(robots||"নির্দিষ্ট করা হয়নি"))
     ].join("");
 
     const notes=[];

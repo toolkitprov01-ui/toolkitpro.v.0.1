@@ -1,0 +1,4 @@
+const V="2026.09.18.13";
+export function render(){return '<div class="tool-form"><input id="rbS" placeholder="https://example.com"><select id="rbM"><option value="allow">Allow all</option><option value="block">Block all</option></select><div class="actions"><button class="primary" id="rbG">Generate robots.txt</button><button class="secondary" id="rbC">Copy</button></div><textarea id="rbO" rows="9" readonly></textarea></div>'}
+export function mount(){const q=id=>document.getElementById(id);q("rbG").onclick=()=>{const s=q("rbS").value.trim().replace(/\/$/,"");q("rbO").value="User-agent: *\n"+(q("rbM").value==="allow"?"Allow: /":"Disallow: /")+(s?"\n\nSitemap: "+s+"/sitemap.xml":"")};q("rbC").onclick=()=>navigator.clipboard?.writeText(q("rbO").value)}
+export {V as MODULE_VERSION};

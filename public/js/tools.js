@@ -163,4 +163,4 @@ document.querySelector("#year").textContent=new Date().getFullYear();
 window.addEventListener("popstate",()=>{const id=new URLSearchParams(location.search).get("tool");id?openTool(id,false):closeTool(false)});
 const initial=new URLSearchParams(location.search).get("tool");
 renderCards(active,search.value);
-openTool(byId(initial)?initial:"word-counter",Boolean(initial));
+if(initial&&byId(initial)) openTool(initial,false);

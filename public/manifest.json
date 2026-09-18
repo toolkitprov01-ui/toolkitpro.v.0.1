@@ -1,0 +1,9 @@
+{
+  "name": "Toolkit Pro",
+  "short_name": "Toolkit Pro",
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#2563eb",
+  "background_color": "#f8fafc",
+  "lang": "bn"
+}

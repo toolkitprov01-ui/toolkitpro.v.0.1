@@ -14,8 +14,7 @@ app.use(express.json({ limit: "1mb" }));
 app.use(express.urlencoded({ extended: true, limit: "1mb" }));
 app.use(express.static(path.join(__dirname, "public")));
 
-app.get("/api/health", (req, res) => res.redirect(307, "/api/health/detail"));
-app.use("/api/health/detail", healthRouter);
+app.use("/api/health", healthRouter);
 app.use("/api/tools", toolsRouter);
 
 app.get("/{*splat}", (req, res) => {

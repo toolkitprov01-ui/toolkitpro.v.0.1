@@ -3,7 +3,7 @@ const helmet = require("helmet");
 const path = require("path");
 const fs = require("fs");
 const { getAllTools, getToolById, REGISTRY_VERSION } = require("./config/tool-registry");
-const { enqueue, getJob } = require("./lib/job-queue");
+const { enqueue, getJob, getQueueInfo } = require("./lib/job-queue");
 
 const APP_VERSION = "2.0.3";
 const SITE_URL = "https://toolkitpro-v-0-1.onrender.com";
@@ -82,7 +82,7 @@ app.use(express.static(publicDir, { etag:true, maxAge:0 }));
 
 app.get("/api/health", (req,res) => {
   res.set("Cache-Control","no-store");
-  res.json({success:true,service:"Toolkit Pro",status:"ok",version:APP_VERSION,registryVersion:REGISTRY_VERSION,cache:{type:"memory",entries:cache.size,ttlMs:CACHE_TTL_MS},queue:{type:"in-memory",enabled:true},timestamp:new Date().toISOString()});
+  res.json({success:true,service:"Toolkit Pro",status:"ok",version:APP_VERSION,registryVersion:REGISTRY_VERSION,cache:{type:"memory",entries:cache.size,ttlMs:CACHE_TTL_MS},queue:getQueueInfo(),timestamp:new Date().toISOString()});
 });
 app.get("/api/tools",(req,res) => {
   const cached=cacheGet("tools"); const tools=cached||cacheSet("tools",getAllTools(),300_000);
@@ -94,7 +94,7 @@ app.get("/api/tools/:id",(req,res) => {
   if(!tool) return res.status(404).json({success:false,error:"Tool not found"});
   res.json({success:true,tool});
 });
-app.post("/api/jobs",(req,res) => {
+app.post("/api/jobs",async (req,res) => {
   const type=String(req.body?.type||"").trim();
   const payload=req.body?.payload && typeof req.body.payload==="object" ? req.body.payload : {};
   if(type!=="example") return res.status(400).json({success:false,error:"Unsupported job type"});

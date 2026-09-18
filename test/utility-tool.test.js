@@ -35,6 +35,10 @@ async function loadUtility() {
 
   assert.equal(operations["remove-line-breaks"]("a\n  b"), "a b");
   assert.equal(operations["reading-time-calculator"]("one two three"), "1 min (3 words)");
+  assert.equal(operations["json-stringify"]("{\"a\":1}"), "{\n  \"a\": 1\n}");
+  assert.equal(operations["time-duration-calculator"]("23:30,01:15"), "1 hours 45 minutes 0 seconds");
+  assert.match(operations["timezone-converter"]("2026-09-18T12:00:00Z Asia/Dhaka"), /2026/);
+  assert.throws(() => operations["body-fat-calculator"]("30 35 170"), /waist must be greater/);
 
   console.log("Utility functional tests passed");
 })().catch(error => {

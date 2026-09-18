@@ -1,4 +1,13 @@
 const API="/api/tools";let allTools=[];
+
+// Remove any previously installed service worker/cache so stale homepage assets cannot override the live UI.
+if("serviceWorker" in navigator){
+  window.addEventListener("load",()=>{
+    navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister())).catch(()=>{});
+    if("caches" in window)caches.keys().then(keys=>Promise.all(keys.map(k=>caches.delete(k)))).catch(()=>{});
+  });
+}
+
 const fallbackTools=[{id:"word-counter",name:"Word Counter",category:"text",description:"Count words, characters, lines and spaces.",icon:"📝"},{id:"case-converter",name:"Case Converter",category:"text",description:"Convert text to uppercase, lowercase, title case and sentence case.",icon:"🔤"},{id:"json-formatter",name:"JSON Formatter",category:"developer",description:"Format, minify and validate JSON data.",icon:"{ }"},{id:"base64",name:"Base64 Encoder",category:"developer",description:"Encode and decode Unicode text with Base64.",icon:"🔐"},{id:"url-encoder",name:"URL Encoder",category:"developer",description:"Encode and decode URL components safely.",icon:"🔗"},{id:"password-generator",name:"Password Generator",category:"security",description:"Generate strong random passwords.",icon:"🔑"},{id:"uuid-generator",name:"UUID Generator",category:"developer",description:"Generate secure UUID values.",icon:"🆔"},{id:"percentage",name:"Percentage Calculator",category:"calculator",description:"Calculate percentages quickly.",icon:"🧮"},{id:"unit-converter",name:"Unit Converter",category:"converter",description:"Convert common length units.",icon:"📏"},{id:"timestamp",name:"Unix Timestamp",category:"developer",description:"Convert timestamps and ISO dates.",icon:"⏱️"}];
 const categoryMeta={text:{name:"Text Tools",icon:"📝"},developer:{name:"Developer Tools",icon:"💻"},security:{name:"Security Tools",icon:"🔐"},calculator:{name:"Calculators",icon:"🧮"},converter:{name:"Converters",icon:"🔄"},image:{name:"Image Tools",icon:"🖼️"},seo:{name:"SEO Tools",icon:"🌐"},utility:{name:"Utility Tools",icon:"⚡"}};
 function normalize(t){const c=String(t.category||"utility").toLowerCase();return{id:t.id||t.slug,name:t.name||t.title||"Untitled Tool",category:c,description:t.description||"দ্রুত অনলাইন টুল।",icon:t.icon||categoryMeta[c]?.icon||"🔧"}}

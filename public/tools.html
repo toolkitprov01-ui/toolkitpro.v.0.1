@@ -1,116 +1,20 @@
 <!doctype html>
 <html lang="bn">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Toolkit Pro-এর ফ্রি অনলাইন টুলস — Text, Developer, Security ও Utility tools।">
-  <title>সব টুলস — Toolkit Pro</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="stylesheet" href="/css/style.css?v=12">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>সব টুলস — Toolkit Pro</title>
+<meta name="description" content="Toolkit Pro-এর ফ্রি অনলাইন টুলস।">
+<link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-<header class="site-header">
-  <div class="header-container">
-    <a class="logo" href="/" aria-label="Toolkit Pro Home">
-      <span class="logo-icon"><i class="fa-solid fa-toolbox"></i></span>
-      <span class="logo-text"><span class="brand-name">Toolkit <span>Pro</span></span><small class="brand-tagline">আপনার প্রতিদিনের টুলস</small></span>
-    </a>
-    <nav class="header-nav" aria-label="প্রধান নেভিগেশন">
-      <a class="nav-link" href="/">হোম</a>
-      <a class="nav-link active" href="/tools.html">সব টুলস</a>
-    </nav>
-    <div class="header-actions">
-      <button class="lang-toggle" id="langToggle" type="button" aria-label="Language">বাং</button>
-      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Theme"><i class="fa-solid fa-moon"></i></button>
-      <button class="menu-toggle" id="menuToggle" type="button" aria-label="Menu"><i class="fa-solid fa-bars"></i></button>
-    </div>
-  </div>
-  <div class="mobile-menu" id="mobileMenu">
-    <a class="nav-link" href="/">হোম</a>
-    <a class="nav-link active" href="/tools.html">সব টুলস</a>
-  </div>
-</header>
-
-<section class="tools-hero">
-  <div class="tools-hero-glow"></div>
-  <div class="container tools-hero-content">
-    <div class="hero-icon"><i class="fa-solid fa-screwdriver-wrench"></i></div>
-    <p class="tools-kicker">TOOLKIT PRO • FREE ONLINE TOOLS</p>
-    <h1>সব টুলস <span>এক জায়গায়</span></h1>
-    <p>Text, Developer, Security, SEO এবং Utility—প্রয়োজনীয় টুলস সরাসরি ব্রাউজারেই ব্যবহার করুন।</p>
-    <div class="tools-search">
-      <i class="fa-solid fa-magnifying-glass"></i>
-      <input id="toolSearch" aria-label="টুল খুঁজুন" type="search" placeholder="টুল খুঁজুন… যেমন JSON, Password, URL" autocomplete="off">
-      <kbd>/</kbd>
-    </div>
-  </div>
-</section>
-
-<main class="tools-main">
-  <div class="container">
-    <div class="tools-toolbar">
-      <div>
-        <h2>আপনার প্রয়োজনীয় টুল বেছে নিন</h2>
-        <p id="toolCount">10টি টুল উপলব্ধ</p>
-      </div>
-      <a class="back-home" href="/"><i class="fa-solid fa-arrow-left"></i> হোমপেজ</a>
-    </div>
-
-    <div class="tools-shell">
-      <aside class="tools-sidebar" aria-label="টুল ক্যাটাগরি">
-        <div class="sidebar-title"><i class="fa-solid fa-layer-group"></i> ক্যাটাগরি</div>
-        <button class="category-filter active" data-category="all" type="button"><span>✨</span> সব টুলস <b id="allCount">10</b></button>
-        <button class="category-filter" data-category="text" type="button"><span>📝</span> Text <b>2</b></button>
-        <button class="category-filter" data-category="developer" type="button"><span>💻</span> Developer <b>4</b></button>
-        <button class="category-filter" data-category="security" type="button"><span>🛡️</span> Security <b>2</b></button>
-        <button class="category-filter" data-category="utility" type="button"><span>⚙️</span> Utility <b>2</b></button>
-      </aside>
-
-      <section class="tools-workspace">
-        <div class="tool-cards" id="toolCards" aria-live="polite"></div>
-
-        <section class="tool-runner" id="toolRunner" aria-label="Selected tool">
-          <div class="runner-head">
-            <div>
-              <span class="runner-badge"><i class="fa-solid fa-bolt"></i> এখন ব্যবহার করুন</span>
-              <h2 id="runnerTitle">📝 Word Counter</h2>
-              <p id="runnerDescription">আপনার লেখার শব্দ, অক্ষর ও লাইন গুনুন।</p>
-            </div>
-            <button class="runner-close" id="runnerClose" type="button" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
-          </div>
-          <div id="toolPanel"></div>
-        </section>
-      </section>
-    </div>
-  </div>
+<header class="header"><a class="brand" href="/">🛠️ Toolkit <span>Pro</span></a><nav><a href="/">হোম</a><a class="active" href="/tools.html">সব টুলস</a></nav></header>
+<main class="section tools-page">
+<section class="page-title"><div class="eyebrow">TOOLKIT PRO</div><h1>সব টুলস এক জায়গায়</h1><p>একটি টুল নির্বাচন করুন। URL-এ <code>?tool=</code> ব্যবহার করেও সরাসরি টুল খোলা যাবে।</p></section>
+<div class="tool-layout">
+<aside><label for="search">খুঁজুন</label><input id="search" type="search" placeholder="যেমন: JSON"><div id="filters"></div></aside>
+<section><div id="cards" class="cards"></div><section id="workspace" class="workspace" hidden><div class="workspace-head"><div><div id="toolIcon" class="tool-icon"></div><h2 id="toolTitle"></h2><p id="toolDescription"></p></div><button id="close" class="ghost" type="button">বন্ধ করুন</button></div><div id="panel"></div></section></section>
+</div>
 </main>
-
-<footer class="site-footer">
-  <div class="footer-container">
-    <div class="footer-bottom">
-      <p class="copyright-text">© <span id="year"></span> Toolkit Pro <span class="version-badge">v0.1</span></p>
-      <div class="footer-credit"><span>ফ্রি অনলাইন টুলস</span><span class="divider"></span><span>দ্রুত • নিরাপদ • সহজ</span></div>
-    </div>
-  </div>
-</footer>
-
-<script src="/js/tools.js?v=13" defer></script>
-<script>
-window.addEventListener("DOMContentLoaded",()=>{
-  const theme=document.getElementById("themeToggle"), menu=document.getElementById("menuToggle"), mobile=document.getElementById("mobileMenu");
-  const saved=localStorage.getItem("toolkit-theme");
-  if(saved==="dark") document.documentElement.dataset.theme="dark";
-  const sync=()=>theme.innerHTML=document.documentElement.dataset.theme==="dark"?'<i class="fa-solid fa-sun"></i>':'<i class="fa-solid fa-moon"></i>';
-  sync();
-  theme.onclick=()=>{document.documentElement.dataset.theme=document.documentElement.dataset.theme==="dark"?"light":"dark";localStorage.setItem("toolkit-theme",document.documentElement.dataset.theme);sync()};
-  menu.onclick=()=>mobile.classList.toggle("active");
-  const lang=document.getElementById("langToggle");
-  lang.onclick=()=>{lang.textContent=lang.textContent==="বাং"?"EN":"বাং"};
-  document.addEventListener("keydown",e=>{if(e.key==="/" && document.activeElement.tagName!=="INPUT" && document.activeElement.tagName!=="TEXTAREA"){e.preventDefault();document.getElementById("toolSearch").focus()}});
-});
-</script>
-</body>
-</html>
+<footer>© <span id="year"></span> Toolkit Pro</footer>
+<script src="/js/tools.js" defer></script>
+</body></html>

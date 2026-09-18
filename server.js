@@ -1,28 +1,31 @@
-require("dotenv").config();
-
 const express = require("express");
+const helmet = require("helmet");
 const path = require("path");
-const { applySecurity } = require("./middleware/security");
-const healthRouter = require("./routes/health");
-const toolsRouter = require("./routes/tools");
+const { getAllTools, getToolById } = require("./config/tool-registry");
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = Number(process.env.PORT) || 3000;
 
-applySecurity(app);
-app.use((req, res, next) => {
-  if (req.path === "/" || req.path === "/tools.html" || req.path.startsWith("/js/") || req.path.startsWith("/css/")) res.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
-  next();
-});
+app.use(helmet({ contentSecurityPolicy: false }));
 app.use(express.json({ limit: "1mb" }));
-app.use(express.urlencoded({ extended: true, limit: "1mb" }));
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "public"), { etag: true }));
 
-app.use("/api/health", healthRouter);
-app.use("/api/tools", toolsRouter);
-
-app.get("/{*splat}", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
+app.get("/api/health", (req, res) => {
+  res.json({ success: true, service: "Toolkit Pro", status: "ok", version: "2.0.0", timestamp: new Date().toISOString() });
 });
 
-app.listen(PORT, () => console.log(`Toolkit Pro server running on port ${PORT}`));
+app.get("/api/tools", (req, res) => {
+  const tools = getAllTools();
+  res.json({ success: true, count: tools.length, tools });
+});
+
+app.get("/api/tools/:id", (req, res) => {
+  const tool = getToolById(req.params.id);
+  if (!tool) return res.status(404).json({ success: false, error: "Tool not found" });
+  res.json({ success: true, tool });
+});
+
+app.get("/tools", (req, res) => res.sendFile(path.join(__dirname, "public", "tools.html")));
+app.get("/{*splat}", (req, res) => res.sendFile(path.join(__dirname, "public", "index.html")));
+
+app.listen(PORT, () => console.log(`Toolkit Pro v2 running on port ${PORT}`));

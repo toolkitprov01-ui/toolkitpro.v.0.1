@@ -54,3 +54,6 @@ button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible{o
 
 /* Universal Tool Workshop */
 .tool-workshop{max-width:1100px;margin:24px auto;padding:0 16px}.workshop-header{display:flex;gap:16px;align-items:flex-start;padding:24px;border:1px solid var(--border,#e5e7eb);border-radius:18px;background:var(--surface,#fff);box-shadow:0 8px 30px rgba(0,0,0,.05)}.workshop-icon{font-size:42px;line-height:1}.workshop-header h1{margin:0 0 6px}.workshop-header p{margin:0;opacity:.75}.workshop-body{margin-top:18px}.workshop-body .tool-form{background:var(--surface,#fff);border:1px solid var(--border,#e5e7eb);border-radius:18px;padding:20px}@media(max-width:640px){.workshop-header{padding:18px}.workshop-icon{font-size:32px}.workshop-body .tool-form{padding:14px}}
+
+/* Workshop UI v2026.09.18.7 */
+.workspace .workshop-header{margin:0;border:0;border-bottom:1px solid var(--border);border-radius:0;box-shadow:none;padding:22px 24px}.workspace .tool-workshop{max-width:none;margin:0;padding:0}.workspace .workshop-body{margin:0;padding:20px 24px}.workspace .workshop-body .tool-form{border:0;padding:0;box-shadow:none;background:transparent}.workspace .workshop-icon{font-size:38px}@media(max-width:640px){.workspace .workshop-header,.workspace .workshop-body{padding:16px}.workspace .workshop-icon{font-size:30px}}

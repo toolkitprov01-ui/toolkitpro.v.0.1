@@ -10,9 +10,11 @@ permissions:
   contents: read
 
 jobs:
-  test:
+  validate:
+    name: Registry + module validation (Node ${{ matrix.node-version }})
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         node-version: [20, 22]
     steps:
@@ -24,8 +26,12 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: npm
       - name: Install dependencies
-        run: npm install
-      - name: Run tests
+        run: npm ci
+      - name: Run registry tests
+        run: npm run test:registry
+      - name: Validate tool modules
+        run: npm run validate:modules
+      - name: Run full test suite
         run: npm test
       - name: Syntax check
         run: npm run test:syntax

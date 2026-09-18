@@ -63,6 +63,14 @@ const operations={
 "px-to-rem":v=>String(Number(v)/16),
 "rem-to-px":v=>String(Number(v)*16),
 "aspect-ratio-calculator":v=>{const [w,h]=v.split(/[,\s]+/).map(Number);const g=(a,b)=>b?g(b,a%b):a;const d=g(w,h);return `${w/d}:${h/d}`},
+"unix-to-date":v=>new Date(Number(v)*1000).toISOString(),
+"date-to-unix":v=>String(Math.floor(new Date(v).getTime()/1000)),
+"bmi-calculator":v=>{const [w,h]=v.split(/[,\\s]+/).map(Number);return String(w/Math.pow(h/100,2))},
+"json-stringify":v=>JSON.stringify(v),
+"json-parse-viewer":v=>JSON.stringify(JSON.parse(v),null,2),
+"html-escape":v=>v.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"),
+"html-unescape":v=>{const e=document.createElement("textarea");e.innerHTML=v;return e.value},
+"json-to-yaml":v=>Object.entries(JSON.parse(v)).map(([k,val])=>k+": "+JSON.stringify(val)).join("\n"),
 "lorem-ipsum-generator":v=>Array(Math.max(1,Number(v)||3)).fill("Lorem ipsum dolor sit amet, consectetur adipiscing elit.").join(" ")
 };
 

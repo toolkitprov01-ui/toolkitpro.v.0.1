@@ -98,6 +98,11 @@ async function loadUtility() {
   assert.equal(operations["json-to-csv"]("[{\"a\":1,\"b\":2}]"), "\"a\",\"b\"\n\"1\",\"2\"");
   assert.equal(operations["csv-to-json"]("a,b\n1,2"), "[\n  {\n    \"a\": \"1\",\n    \"b\": \"2\"\n  }\n]");
 
+
+  assert.equal(operations["base64-encoder"]("বাংলা 🚀"), "4ZGN4Ka+4KaV4Kaf4KawIPCfmoA=");
+  assert.equal(operations["base64-decoder"]("4ZGN4Ka+4KaV4Kaf4KawIPCfmoA="), "বাংলা 🚀");
+  assert.equal(operations["title-case-converter"]("hello world"), "Hello World");
+
   console.log("Utility functional tests passed");
 })().catch(error => {
   console.error(error);

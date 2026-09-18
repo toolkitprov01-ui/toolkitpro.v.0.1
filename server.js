@@ -2,26 +2,24 @@ require("dotenv").config();
 
 const express = require("express");
 const path = require("path");
+const { applySecurity } = require("./middleware/security");
+const healthRouter = require("./routes/health");
+const toolsRouter = require("./routes/tools");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+applySecurity(app);
+app.use(express.json({ limit: "1mb" }));
+app.use(express.urlencoded({ extended: true, limit: "1mb" }));
 app.use(express.static(path.join(__dirname, "public")));
 
-app.get("/api/health", (req, res) => {
-  res.json({
-    success: true,
-    service: "Toolkit Pro",
-    status: "ok"
-  });
-});
+app.get("/api/health", (req, res) => res.redirect(307, "/api/health/detail"));
+app.use("/api/health/detail", healthRouter);
+app.use("/api/tools", toolsRouter);
 
 app.get("/{*splat}", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-app.listen(PORT, () => {
-  console.log(`Toolkit Pro server running on port ${PORT}`);
-});
+app.listen(PORT, () => console.log(`Toolkit Pro server running on port ${PORT}`));

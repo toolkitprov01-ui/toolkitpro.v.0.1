@@ -151,4 +151,4 @@ export function mount({tool,root}){
   root.querySelector("#utilityClear").addEventListener("click",()=>{input.value="";output.value="";input.focus()});
   if(["uuid-generator","timestamp-generator","random-password","random-password-generator","timestamp-generator","unix-time-now","uuid-bulk-generator"].includes(tool.id))run();
 }
-export {MODULE_VERSION};
+export {MODULE_VERSION,operations};

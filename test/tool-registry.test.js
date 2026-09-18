@@ -4,7 +4,7 @@ const { getAllTools, getToolById } = require("../config/tool-registry");
 const tools = getAllTools();
 
 assert.ok(Array.isArray(tools), "Registry must return an array");
-assert.ok(tools.length >= 27, "Registry should contain the current tool set");
+assert.equal(tools.length, 100, "Registry must contain exactly 100 tools");
 
 const ids = tools.map(tool => tool.id);
 assert.equal(new Set(ids).size, ids.length, "Tool IDs must be unique");

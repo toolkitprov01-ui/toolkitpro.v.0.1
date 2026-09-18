@@ -1,0 +1,4 @@
+const V="2026.09.18.17";
+export function render(){return '<div class="tool-form"><textarea id="blI" rows="14" placeholder="HTML source paste করুন…"></textarea><button class="primary" id="blG">Extract links</button><div id="blO" class="seo-results"></div></div>'}
+export function mount(){const q=id=>document.getElementById(id);q("blG").onclick=()=>{const d=new DOMParser().parseFromString(q("blI").value,"text/html"),links=[...d.querySelectorAll("a[href]")],rows=links.map((a,i)=>'<div class="seo-check ok"><strong>'+(i+1)+'. '+(a.textContent.trim()||"Unnamed link")+'</strong><span>'+a.getAttribute("href")+'</span></div>');q("blO").innerHTML='<div class="seo-notes">Found '+links.length+' links. Browser-side extraction cannot reliably test every external URL for broken status because of CORS.</div>'+rows.join("")}}
+export {V as MODULE_VERSION};

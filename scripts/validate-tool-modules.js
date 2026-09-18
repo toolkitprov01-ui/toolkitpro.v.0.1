@@ -9,7 +9,7 @@ const errors = [];
 const ids = new Set();
 const slugs = new Set();
 
-if (tools.length !== 150) errors.push("registry: expected exactly 150 tools, found " + tools.length);
+if (tools.length !== 155) errors.push("registry: expected exactly 155 tools, found " + tools.length);
 
 for (const tool of tools) {
   if (ids.has(tool.id)) errors.push(tool.id + ": duplicate id");

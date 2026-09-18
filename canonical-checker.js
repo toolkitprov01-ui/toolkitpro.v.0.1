@@ -1,0 +1,5 @@
+const MODULE_VERSION="2026.09.19.7";
+const esc=v=>String(v??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+export function render(){return `<div class="tool-form"><textarea id="ccI" rows="14" placeholder="HTML source paste করুন…"></textarea><div class="actions"><button class="primary" id="ccG">Canonical পরীক্ষা</button><button class="secondary" id="ccC">পরিষ্কার</button></div><div id="ccO" class="seo-results"></div></div>`}
+export function mount(){const q=id=>document.getElementById(id);q("ccG").onclick=()=>{const d=new DOMParser().parseFromString(q("ccI").value,"text/html"),a=[...d.querySelectorAll('link[rel~="canonical"]')],vals=a.map(x=>(x.getAttribute("href")||"").trim()),valid=vals.filter(v=>{try{return ["http:","https:"].includes(new URL(v).protocol)}catch{return false}});q("ccO").innerHTML=`<div class="seo-check ${a.length===1&&valid.length===1?"ok":"warn"}"><strong>${a.length===1&&valid.length===1?"✓ Valid canonical":"! Canonical needs review"}</strong><span>${a.length}টি tag • ${esc(vals.join(" | ")||"পাওয়া যায়নি")}</span></div>`};q("ccC").onclick=()=>{q("ccI").value="";q("ccO").innerHTML=""}}
+export {MODULE_VERSION};

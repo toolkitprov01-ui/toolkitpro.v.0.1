@@ -72,6 +72,7 @@ function openTool(id,updateUrl=true){
   panel.innerHTML=templates(id);
   runner.hidden=false;runner.classList.add("visible");
   document.body.classList.add("tool-focus-mode","tool-active-page");
+  document.documentElement.classList.add("tool-page-active");
   if(updateUrl)history.replaceState(null,"","/tools.html?tool="+encodeURIComponent(id));
   panel.querySelectorAll("[data-action]").forEach(el=>el.addEventListener("click",()=>run(id,el.dataset.action)));
   panel.querySelector("#copyButton")?.addEventListener("click",copyResult);
@@ -87,6 +88,7 @@ function openTool(id,updateUrl=true){
 function closeTool(updateUrl=true){
   runner.classList.remove("visible");runner.hidden=true;
   document.body.classList.remove("tool-focus-mode","tool-active-page");
+  document.documentElement.classList.remove("tool-page-active");
   if(updateUrl)history.replaceState(null,"","/tools.html");
   search.focus();
 }
@@ -159,6 +161,7 @@ document.querySelectorAll(".category-filter").forEach(b=>b.addEventListener("cli
 list.addEventListener("click",e=>{const id=e.target.closest("[data-tool]")?.dataset.tool;if(id)openTool(id)});
 search.addEventListener("input",()=>renderCards(active,search.value));
 runnerClose.addEventListener("click",()=>closeTool());
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!runner.hidden)closeTool();if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="k"){e.preventDefault();search.focus()}});
 document.querySelector("#year").textContent=new Date().getFullYear();
 window.addEventListener("popstate",()=>{const id=new URLSearchParams(location.search).get("tool");id?openTool(id,false):closeTool(false)});
 const initial=new URLSearchParams(location.search).get("tool");

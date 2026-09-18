@@ -1,0 +1,5 @@
+const MODULE_VERSION="2026.09.19.7";
+const slugify=v=>v.normalize("NFKD").toLowerCase().trim().replace(/[\u0300-\u036f]/g,"").replace(/[^\p{L}\p{N}\s-]/gu,"").replace(/[\s_-]+/g,"-").replace(/^-+|-+$/g,"").slice(0,120).replace(/-+$/,"");
+export function render(){return `<div class="tool-form"><input id="sgI" placeholder="Page title / heading"><input id="sgO" readonly placeholder="seo-friendly-slug"><div class="actions"><button class="primary" id="sgC">Slug কপি</button><button class="secondary" id="sgX">পরিষ্কার</button></div><div id="sgS" class="status"></div></div>`}
+export function mount(){const q=id=>document.getElementById(id),make=()=>{q("sgO").value=slugify(q("sgI").value);q("sgS").textContent=`${q("sgO").value.length} chars • max 120`};q("sgI").addEventListener("input",make);q("sgC").onclick=async()=>{try{await navigator.clipboard.writeText(q("sgO").value);q("sgS").textContent="Slug কপি হয়েছে।"}catch{}};q("sgX").onclick=()=>{q("sgI").value="";q("sgO").value="";q("sgS").textContent=""};make()}
+export {MODULE_VERSION};

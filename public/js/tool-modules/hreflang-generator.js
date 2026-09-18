@@ -1,0 +1,4 @@
+const V="2026.09.18.15";
+export function render(){return '<div class="tool-form"><input id="hrU" placeholder="Canonical/page URL"><textarea id="hrI" rows="8" placeholder="প্রতি লাইনে: language-region | URL\nযেমন: en-US | https://example.com/en"></textarea><div class="actions"><button class="primary" id="hrG">Generate hreflang</button><button class="secondary" id="hrC">Copy</button></div><textarea id="hrO" rows="12" readonly></textarea></div>'}
+export function mount(){const q=id=>document.getElementById(id);q("hrG").onclick=()=>{const a=q("hrI").value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);q("hrO").value=a.map(x=>{const p=x.split("|"),l=(p.shift()||"").trim(),u=p.join("|").trim();return '<link rel="alternate" hreflang="'+l+'" href="'+u+'">'}).join("\n")+(q("hrU").value?'\n<link rel="alternate" hreflang="x-default" href="'+q("hrU").value+'">':"")};q("hrC").onclick=()=>navigator.clipboard?.writeText(q("hrO").value)}
+export {V as MODULE_VERSION};

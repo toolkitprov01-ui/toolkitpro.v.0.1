@@ -1,4 +1,4 @@
-const ENGINE_VERSION="2026.09.18.7";
+const ENGINE_VERSION="2026.09.19.1";
 const moduleCache=new Map();
 
 export async function loadToolModule(tool){

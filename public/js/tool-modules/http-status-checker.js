@@ -1,0 +1,4 @@
+const V="2026.09.18.16";
+export function render(){return '<div class="tool-form"><input id="hsU" type="url" placeholder="https://example.com"><button class="primary" id="hsG">Check URL</button><div id="hsO" class="seo-results"></div></div>'}
+export async function mount(){const q=id=>document.getElementById(id);q("hsG").onclick=async()=>{const u=q("hsU").value.trim();if(!u)return;q("hsO").innerHTML="<div class=\"seo-notes\">Checking…</div>";try{const r=await fetch(u,{method:"HEAD",mode:"cors"});q("hsO").innerHTML='<div class="seo-check ok"><strong>HTTP '+r.status+' '+r.statusText+'</strong><span>'+r.url+'</span></div>'}catch{q("hsO").innerHTML='<div class="seo-check warn"><strong>Could not read response</strong><span>The target may block browser CORS requests. This does not prove the URL is down.</span></div>'}}}
+export {V as MODULE_VERSION};

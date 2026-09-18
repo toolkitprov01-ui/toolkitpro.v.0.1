@@ -1,12 +1,13 @@
 {
   "name":"toolkit-pro",
-  "version":"2.0.0",
+  "version":"2.0.1",
   "private":true,
   "description":"Toolkit Pro - simple free online tools",
   "main":"server.js",
   "scripts":{
     "start":"node server.js",
-    "test":"node --check server.js"
+    "worker":"node workers/example-worker.js",
+    "test":"node --check server.js && node --check lib/job-queue.js && node --check workers/example-worker.js"
   },
   "engines":{"node":">=20"},
   "dependencies":{

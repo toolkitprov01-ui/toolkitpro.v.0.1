@@ -106,12 +106,12 @@ app.get("/api/health", (req,res) => {
   res.set("Cache-Control","no-store");
   res.json({success:true,service:"Toolkit Pro",status:"ok",version:APP_VERSION,registryVersion:REGISTRY_VERSION,cache:{type:"memory",entries:cache.size,ttlMs:CACHE_TTL_MS},registry:getDatabaseInfo(),queue:getQueueInfo(),timestamp:new Date().toISOString()});
 });
-app.get("/api/tools",(req,res) => {
-  const cached=cacheGet("tools"); const tools=cached||cacheSet("tools",getAllTools(),300_000);
+app.get("/api/tools",async (req,res) => {
+  const cached=cacheGet("tools"); const tools=cached||cacheSet("tools",await registryTools(),300_000);
   res.set("Cache-Control","public, max-age=60, stale-while-revalidate=300"); res.json({success:true,count:tools.length,tools});
 });
-app.get("/api/tools/:id",(req,res) => {
-  const key="tool:"+req.params.id; const cached=cacheGet(key); const tool=cached||cacheSet(key,getToolById(req.params.id),300_000);
+app.get("/api/tools/:id",async (req,res) => {
+  const key="tool:"+req.params.id; const cached=cacheGet(key); const tool=cached||cacheSet(key,await registryTool(req.params.id),300_000);
   res.set("Cache-Control","public, max-age=60, stale-while-revalidate=300");
   if(!tool) return res.status(404).json({success:false,error:"Tool not found"});
   res.json({success:true,tool});
@@ -123,15 +123,15 @@ app.post("/api/jobs",async (req,res) => {
   try { const job=await enqueue(type,payload); res.status(202).json({success:true,job:{id:job.id,type:job.type,status:job.status,createdAt:job.createdAt}}); }
   catch(error) { res.status(503).json({success:false,error:"Job queue unavailable"}); }
 });
-app.get("/api/jobs/:id",(req,res) => {
-  const job=getJob(req.params.id);
+app.get("/api/jobs/:id",async (req,res) => {
+  const job=await getJob(req.params.id);
   if(!job) return res.status(404).json({success:false,error:"Job not found"});
   res.set("Cache-Control","no-store").json({success:true,job});
 });
 
 app.get("/tools",(req,res)=>res.sendFile(path.join(publicDir,"tools.html")));
-app.get("/tool/:id",(req,res)=>{
-  const tool=getToolById(req.params.id);
+app.get("/tool/:id",async (req,res)=>{
+  const tool=await registryTool(req.params.id);
   if(!tool) return res.status(404).sendFile(path.join(publicDir,"404.html"));
   const key="tool-page:"+tool.id; const cached=cacheGet(key);
   if(cached) return res.set("Cache-Control","public, max-age=300").send(cached);

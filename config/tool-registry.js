@@ -1,4 +1,4 @@
-const REGISTRY_VERSION="2026.09.18.17";
+const REGISTRY_VERSION="2026.09.18.18";
 
 const tools = [
   { id:"word-counter", name:"Word Counter", bn:"শব্দ গণনা", category:"text", categoryBn:"লেখা", icon:"📝", module:"word-counter", description:"শব্দ, অক্ষর ও লাইনের সংখ্যা গণনা করুন।" },
@@ -30,6 +30,22 @@ const tools = [
   { id:"broken-link-checker", name:"Broken Link Checker", bn:"Broken Link Checker", category:"seo", categoryBn:"SEO", icon:"🔗", module:"broken-link-checker", description:"HTML source থেকে links বের করুন এবং broken-link testing-এর জন্য প্রস্তুত করুন।" }
 ];
 
-function getAllTools(){ return tools; }
-function getToolById(id){ return tools.find(tool => tool.id === id) || null; }
+const normalizedTools = tools.map(tool => ({
+  ...tool,
+  slug: tool.id,
+  subcategory: tool.subcategory || tool.category,
+  tags: Array.isArray(tool.tags) ? tool.tags : [tool.category, tool.name, tool.bn].filter(Boolean),
+  synonyms: Array.isArray(tool.synonyms) ? tool.synonyms : [],
+  runtime: tool.runtime || "browser",
+  version: tool.version || "1.0.0",
+  status: tool.status || "active",
+  seo: tool.seo || {
+    title: tool.bn || tool.name,
+    description: tool.description,
+    keywords: [tool.name, tool.bn, tool.category].filter(Boolean)
+  }
+}));
+
+function getAllTools(){ return normalizedTools; }
+function getToolById(id){ return normalizedTools.find(tool => tool.id === id || tool.slug === id) || null; }
 module.exports = { REGISTRY_VERSION, getAllTools, getToolById };

@@ -1,56 +1,13 @@
-const tools = [
-  ["📝","Text Tools","Text formatting, cleanup and analysis"],
-  ["💻","Developer Tools","Helpful tools for developers"],
-  ["🖼️","Image Tools","Simple image utilities and optimization"],
-  ["🧮","Calculators","Everyday and technical calculations"],
-  ["🔄","Converters","Convert units, formats and values"],
-  ["🔎","SEO Tools","Tools for search optimization"],
-  ["🛡️","Security Tools","Privacy and security utilities"],
-  ["📁","File Tools","Useful file processing tools"],
-  ["🎨","Color Tools","Pick, convert and analyze colors"],
-  ["⚡","Utility Tools","Fast tools for everyday tasks"]
-];
-
-const grid = document.querySelector("#toolGrid");
-const search = document.querySelector("#toolSearch");
-const count = document.querySelector("#toolCount");
-const empty = document.querySelector("#emptyState");
-
-function render(filter = "") {
-  const q = filter.trim().toLowerCase();
-  const visible = tools.filter(([,name,description]) =>
-    `${name} ${description}`.toLowerCase().includes(q)
-  );
-
-  grid.innerHTML = visible.map(([icon,name,description]) => `
-    <article class="tool-card">
-      <div class="tool-icon" aria-hidden="true">${icon}</div>
-      <h3>${name}</h3>
-      <p>${description}</p>
-    </article>
-  `).join("");
-
-  count.textContent = `${visible.length} categories`;
-  empty.hidden = visible.length !== 0;
-}
-
-search.addEventListener("input", event => render(event.target.value));
-
-document.querySelector("#themeToggle").addEventListener("click", () => {
-  document.documentElement.classList.toggle("light");
-});
-
-document.querySelector("#year").textContent = new Date().getFullYear();
-
-fetch("/api/health")
-  .then(response => response.ok ? response.json() : Promise.reject())
-  .then(data => {
-    document.querySelector("#healthStatus").textContent = data.status === "ok" ? "Online" : "Unavailable";
-  })
-  .catch(() => {
-    document.querySelector("#healthStatus").textContent = "Offline";
-  });
-
-render();
-
-if ("serviceWorker" in navigator) window.addEventListener("load", () => navigator.serviceWorker.register("/sw.js").catch(() => {}));
+const API="/api/tools";let allTools=[];
+const fallbackTools=[{id:"word-counter",name:"Word Counter",category:"text",description:"Count words, characters, lines and spaces.",icon:"📝"},{id:"case-converter",name:"Case Converter",category:"text",description:"Convert text to uppercase, lowercase, title case and sentence case.",icon:"🔤"},{id:"json-formatter",name:"JSON Formatter",category:"developer",description:"Format, minify and validate JSON data.",icon:"{ }"},{id:"base64",name:"Base64 Encoder",category:"developer",description:"Encode and decode Unicode text with Base64.",icon:"🔐"},{id:"url-encoder",name:"URL Encoder",category:"developer",description:"Encode and decode URL components safely.",icon:"🔗"},{id:"password-generator",name:"Password Generator",category:"security",description:"Generate strong random passwords.",icon:"🔑"},{id:"uuid-generator",name:"UUID Generator",category:"developer",description:"Generate secure UUID values.",icon:"🆔"},{id:"percentage",name:"Percentage Calculator",category:"calculator",description:"Calculate percentages quickly.",icon:"🧮"},{id:"unit-converter",name:"Unit Converter",category:"converter",description:"Convert common length units.",icon:"📏"},{id:"timestamp",name:"Unix Timestamp",category:"developer",description:"Convert timestamps and ISO dates.",icon:"⏱️"}];
+const categoryMeta={text:{name:"Text Tools",icon:"📝"},developer:{name:"Developer Tools",icon:"💻"},security:{name:"Security Tools",icon:"🔐"},calculator:{name:"Calculators",icon:"🧮"},converter:{name:"Converters",icon:"🔄"},image:{name:"Image Tools",icon:"🖼️"},seo:{name:"SEO Tools",icon:"🌐"},utility:{name:"Utility Tools",icon:"⚡"}};
+function normalize(t){const c=String(t.category||"utility").toLowerCase();return{id:t.id||t.slug,name:t.name||t.title||"Untitled Tool",category:c,description:t.description||"দ্রুত অনলাইন টুল।",icon:t.icon||categoryMeta[c]?.icon||"🔧"}}
+function esc(v){return String(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
+function toolCard(t){return '<a class="tool-card" href="/tools.html?tool='+encodeURIComponent(t.id)+'"><span class="tool-icon">'+esc(t.icon)+'</span><div class="tool-name">'+esc(t.name)+'</div><p class="tool-description">'+esc(t.description)+'</p><div class="tool-meta"><span class="tool-rating">⭐ Free</span><span class="tool-usage">Open →</span></div></a>'}
+function categoryCard(c){return '<a class="category-card" href="/tools.html?search='+encodeURIComponent(c.name)+'"><span class="category-icon">'+esc(c.icon)+'</span><div class="category-name">'+esc(c.name)+'</div><div class="category-count">'+c.count+' টুলস</div></a>'}
+function renderTools(q=""){const s=q.trim().toLowerCase(),v=allTools.filter(t=>(t.name+" "+t.category+" "+t.description).toLowerCase().includes(s));document.getElementById("popularTools").innerHTML=v.slice(0,6).map(toolCard).join("")||'<div class="no-data">কোনো টুল পাওয়া যায়নি</div>';document.getElementById("allTools").innerHTML=v.map(toolCard).join("")||'<div class="no-data">কোনো টুল পাওয়া যায়নি</div>'}
+function renderCategories(){const m=new Map();allTools.forEach(t=>m.set(t.category,(m.get(t.category)||0)+1));const cs=[...m].map(([k,count])=>({name:categoryMeta[k]?.name||k,icon:categoryMeta[k]?.icon||"📁",count}));document.getElementById("categoriesGrid").innerHTML=cs.map(categoryCard).join("")||'<div class="no-data">কোনো ক্যাটাগরি পাওয়া যায়নি</div>';document.getElementById("categoryStat").textContent=cs.length}
+function renderFooter(){document.getElementById("footerPopular").innerHTML=allTools.slice(0,4).map(t=>'<li><a href="/tools.html?tool='+encodeURIComponent(t.id)+'">'+esc(t.name)+'</a></li>').join("")}
+async function loadData(){try{const r=await fetch(API,{headers:{Accept:"application/json"}});if(!r.ok)throw Error();const d=await r.json();allTools=(d.tools||[]).map(normalize)}catch(e){allTools=fallbackTools.map(normalize)}document.getElementById("toolStat").textContent=allTools.length;renderCategories();renderTools();renderFooter()}
+function theme(t){document.body.setAttribute("data-theme",t);document.getElementById("themeIcon").textContent=t==="dark"?"☀️":"🌙";localStorage.setItem("theme",t)}
+document.addEventListener("DOMContentLoaded",()=>{document.getElementById("year").textContent=new Date().getFullYear();const saved=localStorage.getItem("theme");if(saved)theme(saved);document.getElementById("themeToggle").addEventListener("click",()=>theme(document.body.getAttribute("data-theme")==="dark"?"light":"dark"));document.getElementById("menuToggle").addEventListener("click",()=>{const m=document.getElementById("mobileMenu"),o=m.classList.toggle("active");document.getElementById("menuToggle").setAttribute("aria-expanded",String(o))});document.getElementById("searchForm").addEventListener("submit",e=>{e.preventDefault();const q=document.getElementById("toolSearch").value.trim();if(q)location.href="/tools.html?search="+encodeURIComponent(q)});document.getElementById("langBtn").addEventListener("click",()=>{const b=document.getElementById("langBtn");b.textContent=b.textContent==="EN"?"বাং":"EN"});loadData();fetch("/api/health").catch(()=>{})});

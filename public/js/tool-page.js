@@ -1,4 +1,4 @@
-const TOOL_PAGE_VERSION="2026.09.18.2";
+const TOOL_PAGE_VERSION="2026.09.18.3";
 import {mountWorkshop} from "./workshop-engine.js";
 
 const root=document.getElementById("toolRoot");
@@ -20,9 +20,16 @@ document.getElementById("menuToggle")?.addEventListener("click",()=>{
   button.setAttribute("aria-expanded",String(open));
 });
 
+function getToolId(){
+  const embedded=String(window.__TOOL_ID__||"").trim();
+  if(embedded&&embedded!=="__TOOL_ID__") return embedded;
+  const match=window.location.pathname.match(/^\/tool\/([^/]+)\/?$/);
+  return match?decodeURIComponent(match[1]):"";
+}
+
 async function loadTool(){
-  const id=window.__TOOL_ID__;
-  if(!id) throw new Error("Tool ID is missing from page");
+  const id=getToolId();
+  if(!id) throw new Error("Tool ID is missing from page and route");
 
   const response=await fetch("/api/tools/"+encodeURIComponent(id),{
     headers:{Accept:"application/json"},
@@ -39,7 +46,7 @@ async function loadTool(){
 
 loadTool().catch(error=>{
   console.error("Tool page load error",error);
-  root.innerHTML='<section class="tool-workshop"><div class="seo-check warn"><strong>টুল লোড করা যাচ্ছে না</strong><span>API সঠিক হলেও টুলটি চালু হতে সমস্যা হয়েছে। পেজটি রিফ্রেশ করুন।</span></div></section>';
+  root.innerHTML='<section class="tool-workshop"><div class="seo-check warn"><strong>টুল লোড করা যাচ্ছে না</strong><span>টুলের আইডি বা মডিউল লোডে সমস্যা হয়েছে। পেজটি রিফ্রেশ করুন।</span></div></section>';
 });
 
 window.ToolkitProToolPageVersion=TOOL_PAGE_VERSION;

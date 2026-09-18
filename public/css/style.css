@@ -15,5 +15,36 @@ button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible{o
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 .legal-main{max-width:980px;margin:auto;padding:52px 20px 70px}.legal-card{background:var(--card);border:1px solid var(--border);border-radius:22px;padding:clamp(24px,5vw,48px);box-shadow:var(--shadow-lg)}.legal-card .eyebrow{color:var(--primary);font-size:.72rem;letter-spacing:.08em;font-weight:900}.legal-card h1{margin-top:8px;font:900 clamp(1.8rem,5vw,2.7rem)/1.2 'Noto Sans Bengali',sans-serif}.legal-card h2{margin-top:28px;font-size:1.05rem}.legal-card p{margin-top:10px;color:var(--muted);font-size:.92rem}.primary-btn{display:inline-flex;align-items:center;justify-content:center;margin-top:26px;padding:11px 17px;border-radius:10px;background:var(--gradient);color:#fff;text-decoration:none;font-weight:800;box-shadow:var(--shadow)}.error-page{min-height:100vh;display:grid;place-items:center;padding:24px;background:var(--bg)}.error-card{max-width:620px;text-align:center;padding:42px 24px;background:var(--card);border:1px solid var(--border);border-radius:24px;box-shadow:var(--shadow-lg)}.error-code{font:900 5rem/1 'Inter',sans-serif;background:var(--gradient);-webkit-background-clip:text;color:transparent}.error-card h1{margin-top:12px;font-size:1.5rem}.error-card p{margin-top:8px;color:var(--muted)}.error-actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}.error-actions .secondary{display:inline-flex;text-decoration:none;margin-top:26px}
 
+
+/* Header dropdown navigation */
+.nav-dropdown{position:relative}
+.nav-dropdown-toggle{border:0;background:transparent;font:inherit;cursor:pointer;gap:7px}
+.dropdown-chevron{font-size:.65rem;transition:transform .2s ease}
+.nav-dropdown:focus-within .dropdown-chevron,.nav-dropdown.is-open .dropdown-chevron{transform:rotate(180deg)}
+.nav-dropdown-menu{position:absolute;top:calc(100% + 8px);left:0;min-width:190px;padding:7px;border:1px solid var(--border);border-radius:13px;background:var(--surface);box-shadow:0 18px 45px rgba(15,23,42,.14);opacity:0;visibility:hidden;transform:translateY(-6px);transition:opacity .18s ease,transform .18s ease,visibility .18s;z-index:1000}
+.nav-dropdown:hover .nav-dropdown-menu,.nav-dropdown:focus-within .nav-dropdown-menu,.nav-dropdown.is-open .nav-dropdown-menu{opacity:1;visibility:visible;transform:translateY(0)}
+.nav-dropdown-menu a{display:flex;align-items:center;gap:10px;padding:10px 11px;border-radius:9px;color:var(--text);text-decoration:none;font-size:.82rem;font-weight:700;white-space:nowrap}
+.nav-dropdown-menu a:hover,.nav-dropdown-menu a:focus-visible{background:rgba(37,99,235,.09);color:var(--primary);outline:none}
+.mobile-nav-group{border-bottom:1px solid var(--border)}
+.mobile-nav-group:last-child{border-bottom:0}
+.mobile-nav-group summary{list-style:none;cursor:pointer;width:100%}
+.mobile-nav-group summary::-webkit-details-marker{display:none}
+.mobile-nav-group summary .fa-chevron-down{margin-left:auto;font-size:.7rem;transition:transform .2s ease}
+.mobile-nav-group[open] summary .fa-chevron-down{transform:rotate(180deg)}
+.mobile-sub-link{display:flex;align-items:center;padding:9px 14px 9px 43px;color:var(--muted);text-decoration:none;font-size:.82rem;font-weight:600}
+.mobile-sub-link:hover,.mobile-sub-link:focus-visible{color:var(--primary);background:rgba(37,99,235,.07);outline:none}
+@media (max-width:900px){
+  .header-nav{gap:0}
+  .nav-dropdown-menu{position:static;display:none;box-shadow:none;border:0;border-radius:0;padding:4px 0 0;background:transparent}
+  .nav-dropdown:hover .nav-dropdown-menu{display:none}
+  .nav-dropdown.is-open .nav-dropdown-menu,.nav-dropdown:focus-within .nav-dropdown-menu{display:block}
+}
+@media (max-width:640px){
+  .mobile-nav-group .nav-link{justify-content:flex-start}
+}
+@media (prefers-reduced-motion:reduce){
+  .dropdown-chevron,.nav-dropdown-menu,.mobile-nav-group summary .fa-chevron-down{transition:none}
+}
+
 /* Homepage refresh marker: 2026-09-18 */
 .homepage-refresh{content-visibility:auto}

@@ -69,7 +69,7 @@ export function mount(){
       check("Twitter Card",twitterCard.length>0,"twitter:card "+(twitterCard[0]||"অনুপস্থিত")),
       check("Viewport",viewport,"Mobile viewport meta "+(viewport?"আছে":"অনুপস্থিত")),
       check("HTML lang",/^[A-Za-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$/.test(lang),`lang="${lang||"অনুপস্থিত"}"`),
-      check("Robots",!/(^|,|\\s)noindex(?:,|\\s|$)/i.test(robots),`robots: ${robots||"নির্দিষ্ট করা হয়নি"}`),
+      check("Robots",!/(^|,|\s)noindex(?:,|\s|$)/i.test(robots),`robots: ${robots||"নির্দিষ্ট করা হয়নি"}`),
       check("Structured data",structuredData>0,`${structuredData}টি JSON-LD block`)
     ];
     results.innerHTML=seoChecks.join("")+`<div class="seo-notes"><strong>Audit summary</strong><p>${links.length}টি link — internal ${internalLinks}, external ${externalLinks} • ${emptyAlt}টি explicitly empty alt • ${structuredData}টি JSON-LD</p></div>`;

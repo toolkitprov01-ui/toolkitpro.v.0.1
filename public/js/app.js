@@ -1,25 +1,12 @@
 const root=document.documentElement;
-const cards=document.querySelector("#tool-cards");
-const year=document.querySelector("#year");
-if(year) year.textContent=new Date().getFullYear();
-
-function applyTheme(theme){
-  root.dataset.theme=theme;
-  localStorage.setItem("toolkit-theme",theme);
-  const btn=document.querySelector("#themeToggle");
-  if(btn){btn.textContent=theme==="dark"?"☀️":"🌙";btn.setAttribute("aria-label",theme==="dark"?"লাইট মোড চালু করুন":"ডার্ক মোড চালু করুন");}
-}
-applyTheme(localStorage.getItem("toolkit-theme")||"light");
-document.querySelector("#themeToggle")?.addEventListener("click",()=>applyTheme(root.dataset.theme==="dark"?"light":"dark"));
-document.querySelector("#langToggle")?.addEventListener("click",()=>alert("English interface will be added when the bilingual content set is ready."));
-
-document.querySelector("#heroSearch")?.addEventListener("submit",(e)=>{
- e.preventDefault(); const q=document.querySelector("#heroSearchInput").value.trim();
- location.href=q?"/tools.html?search="+encodeURIComponent(q):"/tools.html";
-});
-
-fetch("/api/tools").then(r=>{if(!r.ok)throw new Error("API error");return r.json()}).then(({tools=[]})=>{
- const count=document.querySelector("#toolCount"); if(count)count.textContent=tools.length;
- if(!cards)return;
- cards.innerHTML=tools.map(t=>`<a class="card" href="/tools.html?tool=${encodeURIComponent(t.id)}" aria-label="${t.bn} ব্যবহার করুন"><div class="tool-icon" aria-hidden="true">${t.icon}</div><div><h3>${t.bn}</h3><p>${t.description}</p></div><span aria-hidden="true">→</span></a>`).join("");
-}).catch(()=>{if(cards)cards.innerHTML="<div class='empty'>টুল লোড করা যায়নি। আবার চেষ্টা করুন।</div>";});
+let allTools=[];
+const categoryIcons={text:"📝",developer:"💻",security:"🔐",image:"🖼️",seo:"🌐",other:"🧰"};
+const byId=id=>document.getElementById(id);
+function applyTheme(theme){root.dataset.theme=theme;localStorage.setItem("theme",theme);const icon=byId("themeIcon");const btn=byId("themeToggle");if(icon)icon.className=theme==="dark"?"fas fa-sun":"fas fa-moon";if(btn)btn.setAttribute("aria-label",theme==="dark"?"লাইট মোড চালু করুন":"ডার্ক মোড চালু করুন");}
+function toggleMobileMenu(){const menu=byId("mobileMenu"),btn=byId("menuToggle");const open=!menu.classList.contains("active");menu.classList.toggle("active",open);btn.setAttribute("aria-expanded",String(open));btn.setAttribute("aria-label",open?"মোবাইল মেনু বন্ধ করুন":"মোবাইল মেনু খুলুন");}
+function handleSearch(){const q=byId("searchInput").value.trim();location.href=q?"/tools.html?search="+encodeURIComponent(q):"/tools.html";}
+function categoryCard(category,count){return '<a href="/tools.html?category='+encodeURIComponent(category)+'" class="category-card"><span class="category-icon">'+(categoryIcons[category]||"🧰")+'</span><div class="category-name">'+categoryLabel(category)+'</div><div class="category-count">'+count+' টুলস</div></a>';}
+function categoryLabel(c){return ({text:"Text",developer:"Developer",security:"Security",image:"Image",seo:"SEO"})[c]||c;}
+function toolCard(t){return '<a href="/tools.html?tool='+encodeURIComponent(t.id)+'" class="tool-card" aria-label="'+t.bn+' ব্যবহার করুন"><span class="tool-icon" aria-hidden="true">'+(t.icon||"🔧")+'</span><div class="tool-name">'+t.bn+'</div><p class="tool-description">'+(t.description||"")+'</p><div class="tool-meta"><span class="tool-rating">★ দরকারি</span><span class="tool-usage">'+categoryLabel(t.category)+'</span></div></a>';}
+function render(){byId("toolCount").textContent=allTools.length;const cats={};allTools.forEach(t=>cats[t.category]=(cats[t.category]||0)+1);byId("categoryCount").textContent=Object.keys(cats).length;byId("popularTools").innerHTML=allTools.map(toolCard).join("");byId("newTools").innerHTML=allTools.slice(-12).reverse().map(toolCard).join("");byId("categoriesGrid").innerHTML=Object.entries(cats).map(([c,n])=>categoryCard(c,n)).join("");}
+document.addEventListener("DOMContentLoaded",async()=>{applyTheme(localStorage.getItem("theme")||"light");byId("themeToggle").addEventListener("click",()=>applyTheme(root.dataset.theme==="dark"?"light":"dark"));byId("menuToggle").addEventListener("click",toggleMobileMenu);byId("searchForm").addEventListener("submit",e=>{e.preventDefault();handleSearch();});byId("langBtn").addEventListener("click",()=>alert("English interface is planned for the bilingual content release."));byId("year").textContent=new Date().getFullYear();try{const r=await fetch("/api/tools");if(!r.ok)throw new Error();const data=await r.json();allTools=data.tools||[];render();}catch(e){byId("popularTools").innerHTML='<div class="no-data">টুল লোড করা যায়নি।</div>';byId("newTools").innerHTML='<div class="no-data">টুল লোড করা যায়নি।</div>';byId("categoriesGrid").innerHTML='<div class="no-data">ক্যাটাগরি লোড করা যায়নি।</div>';}});

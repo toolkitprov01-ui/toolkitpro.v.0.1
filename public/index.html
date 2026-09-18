@@ -1,87 +1,131 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="bn" data-theme="light">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Toolkit Pro — ফ্রি অনলাইন টুলস</title>
-<meta name="description" content="Toolkit Pro — দ্রুত, সহজ ও বিনামূল্যের অনলাইন টুলস। Text, Developer, Security এবং আরও অনেক দরকারি টুল এক জায়গায়।">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Toolkit Pro – ফ্রি অনলাইন টুলস | Text, Developer, Security Tools</title>
+<meta name="description" content="Toolkit Pro – দরকারি ফ্রি অনলাইন টুলস। Word Counter, JSON Formatter, Password Generator এবং আরও অনেক টুল।">
+<meta name="keywords" content="toolkit pro, online tools, free tools, text tools, developer tools, security tools">
+<meta name="robots" content="index, follow">
 <meta name="theme-color" content="#2563eb">
+<meta property="og:title" content="Toolkit Pro - Free Online Tools">
+<meta property="og:description" content="দরকারি ফ্রি অনলাইন টুলস প্ল্যাটফর্ম।">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://toolkitpro-v-0-1.onrender.com/">
 <link rel="manifest" href="/manifest.json">
-<link rel="stylesheet" href="/css/style.css">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Toolkit Pro","url":"https://toolkitpro-v-0-1.onrender.com/","description":"দরকারি ফ্রি অনলাইন টুলস।","inLanguage":"bn"}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+Bengali:wght@400;500;600;700;800;900&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Toolkit Pro","url":"https://toolkitpro-v-0-1.onrender.com/","description":"দরকারি ফ্রি অনলাইন টুলস প্ল্যাটফর্ম।","inLanguage":"bn"}</script>
 </head>
 <body>
 <a class="skip-link" href="#main-content">মূল কনটেন্টে যান</a>
-<header class="header">
-  <a class="brand" href="/" aria-label="Toolkit Pro হোম"><span class="brand-mark" aria-hidden="true">🛠️</span> Toolkit <span>Pro</span></a>
-  <nav aria-label="প্রধান নেভিগেশন">
-    <a class="active" href="/" aria-current="page">হোম</a><a href="/tools.html">সব টুলস</a>
-  </nav>
-  <div class="header-actions">
-    <button class="icon-btn" id="themeToggle" type="button" aria-label="ডার্ক মোড চালু করুন" title="থিম পরিবর্তন">🌙</button>
-    <button class="lang-btn" id="langToggle" type="button" aria-label="ইংরেজি ভাষা সম্পর্কে" title="Language">EN</button>
+
+<header class="site-header">
+  <div class="header-container">
+    <a href="/" class="logo" aria-label="Toolkit Pro হোম">
+      <div class="logo-icon" aria-hidden="true"><i class="fas fa-tools"></i></div>
+      <div class="logo-text"><span class="brand-name">Toolkit <span>Pro</span></span><span class="brand-tagline">ফ্রি অনলাইন টুলস</span></div>
+    </a>
+    <nav class="header-nav" aria-label="প্রধান নেভিগেশন">
+      <a href="/" class="nav-link active" aria-current="page">হোম</a>
+      <a href="/tools.html" class="nav-link">সব টুলস</a>
+      <a href="/tools.html" class="nav-link">ক্যাটাগরি</a>
+      <a href="#why" class="nav-link">আমাদের সম্পর্কে</a>
+      <a href="#faq" class="nav-link">যোগাযোগ</a>
+    </nav>
+    <div class="header-actions">
+      <button class="lang-toggle" id="langBtn" type="button" aria-label="ভাষা পরিবর্তন">EN</button>
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="ডার্ক মোড চালু করুন" title="থিম পরিবর্তন"><i class="fas fa-moon" id="themeIcon"></i></button>
+      <button class="menu-toggle" id="menuToggle" type="button" aria-label="মোবাইল মেনু খুলুন" aria-expanded="false"><i class="fas fa-bars"></i></button>
+    </div>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="/" class="nav-link active">হোম</a><a href="/tools.html" class="nav-link">সব টুলস</a><a href="/tools.html" class="nav-link">ক্যাটাগরি</a><a href="#why" class="nav-link">আমাদের সম্পর্কে</a><a href="#faq" class="nav-link">যোগাযোগ</a>
   </div>
 </header>
 
 <main id="main-content">
-<section class="hero hero-home">
-  <div class="hero-copy">
-    <div class="eyebrow">TOOLKIT PRO • FREE ONLINE TOOLS</div>
-    <h1>দৈনন্দিন কাজের <span>দরকারি টুলস</span></h1>
-    <p>Text, Developer, Security এবং আরও অনেক ক্যাটাগরির টুল—একটি দ্রুত, সহজ ও মোবাইল-ফ্রেন্ডলি প্ল্যাটফর্মে।</p>
-    <form class="hero-search" id="heroSearch" role="search">
-      <label class="sr-only" for="heroSearchInput">টুল খুঁজুন</label>
-      <input id="heroSearchInput" name="search" type="search" placeholder="যেমন: JSON, Password, Word..." autocomplete="off">
-      <button class="primary" type="submit">🔍 খুঁজুন</button>
-    </form>
-    <div class="quick-links" aria-label="দ্রুত ক্যাটাগরি">
-      <a href="/tools.html?category=text">📝 Text</a><a href="/tools.html?category=developer">💻 Developer</a><a href="/tools.html?category=security">🔐 Security</a>
+  <section class="hero-section">
+    <div class="hero-content">
+      <div class="hero-icon" aria-hidden="true"><i class="fas fa-tools"></i></div>
+      <h1 class="hero-title">ফ্রি অনলাইন <span>টুলস</span></h1>
+      <p class="hero-subtitle">Text, Developer, Security এবং আরও অনেক দরকারি টুল — সহজ, দ্রুত ও বিনামূল্যে।</p>
+      <form class="search-wrapper" id="searchForm" role="search">
+        <label class="sr-only" for="searchInput">টুলস খুঁজুন</label>
+        <input type="search" class="search-input" id="searchInput" placeholder="টুলস খুঁজুন... (যেমন: word counter)" autocomplete="off">
+        <button class="search-btn" type="submit"><i class="fas fa-search" aria-hidden="true"></i> খুঁজুন</button>
+      </form>
+      <div class="quick-links" aria-label="দ্রুত ক্যাটাগরি">
+        <a href="/tools.html?category=text" class="quick-link"><i class="fas fa-pen" aria-hidden="true"></i> Text</a>
+        <a href="/tools.html?category=developer" class="quick-link"><i class="fas fa-code" aria-hidden="true"></i> Developer</a>
+        <a href="/tools.html?category=security" class="quick-link"><i class="fas fa-lock" aria-hidden="true"></i> Security</a>
+        <a href="/tools.html" class="quick-link">সব টুলস →</a>
+      </div>
     </div>
+  </section>
+
+  <section class="stats-bar" aria-label="Toolkit Pro পরিসংখ্যান">
+    <div class="stat-item"><div class="stat-number" id="toolCount">—</div><div class="stat-label">টুলস</div></div>
+    <div class="stat-item"><div class="stat-number" id="categoryCount">—</div><div class="stat-label">ক্যাটাগরি</div></div>
+    <div class="stat-item"><div class="stat-number">100%</div><div class="stat-label">ফ্রি</div></div>
+    <div class="stat-item"><div class="stat-number">24/7</div><div class="stat-label">অনলাইন</div></div>
+  </section>
+
+  <div class="main-content">
+    <div class="ad-container" aria-label="বিজ্ঞাপনের স্থান">Advertisement</div>
+
+    <section class="section" id="popular">
+      <div class="section-header"><h2 class="section-title"><i class="fas fa-fire" aria-hidden="true"></i> জনপ্রিয় টুলস</h2><p class="section-subtitle">সবচেয়ে দরকারি টুলস</p></div>
+      <div class="tools-grid" id="popularTools"><div class="loading"><span class="spinner"></span> লোড হচ্ছে...</div></div>
+    </section>
+
+    <div class="ad-container" aria-label="বিজ্ঞাপনের স্থান">Advertisement</div>
+
+    <section class="section" id="categories">
+      <div class="section-header"><h2 class="section-title"><i class="fas fa-folder-open" aria-hidden="true"></i> ক্যাটাগরি</h2><p class="section-subtitle">ক্যাটাগরি অনুযায়ী ব্রাউজ করুন</p></div>
+      <div class="categories-grid" id="categoriesGrid"><div class="loading"><span class="spinner"></span> লোড হচ্ছে...</div></div>
+    </section>
+
+    <section class="section" id="new">
+      <div class="section-header"><h2 class="section-title"><i class="fas fa-sparkles" aria-hidden="true"></i> নতুন টুলস</h2><p class="section-subtitle">সম্প্রতি যোগ করা টুলস</p></div>
+      <div class="tools-grid" id="newTools"><div class="loading"><span class="spinner"></span> লোড হচ্ছে...</div></div>
+    </section>
+
+    <section class="section" id="why">
+      <div class="section-header"><h2 class="section-title">কেন Toolkit Pro?</h2></div>
+      <div class="features-grid">
+        <div class="feature-card"><span class="feature-icon"><i class="fas fa-gift"></i></span><h3>১০০% ফ্রি</h3><p>দরকারি টুলগুলো সহজে ব্যবহার করুন।</p></div>
+        <div class="feature-card"><span class="feature-icon"><i class="fas fa-bolt"></i></span><h3>দ্রুত</h3><p>সহজ ইন্টারফেস ও দ্রুত ফলাফল।</p></div>
+        <div class="feature-card"><span class="feature-icon"><i class="fas fa-mobile-screen-button"></i></span><h3>মোবাইল ফ্রেন্ডলি</h3><p>ফোন, ট্যাবলেট ও ডেস্কটপে responsive।</p></div>
+        <div class="feature-card"><span class="feature-icon"><i class="fas fa-shield-halved"></i></span><h3>নিরাপদ</h3><p>প্রয়োজন ছাড়া আপনার ইনপুট সার্ভারে পাঠানো হয় না।</p></div>
+      </div>
+    </section>
+
+    <section class="section faq" id="faq" aria-labelledby="faqTitle">
+      <div class="section-header"><h2 class="section-title" id="faqTitle">সাধারণ প্রশ্ন</h2></div>
+      <div class="faq-list">
+        <details class="faq-item"><summary>Toolkit Pro কি?</summary><p>Toolkit Pro একটি ফ্রি অনলাইন টুলস প্ল্যাটফর্ম।</p></details>
+        <details class="faq-item"><summary>টুলস কি সত্যিই ফ্রি?</summary><p>হ্যাঁ, বর্তমান টুলগুলো বিনামূল্যে ব্যবহার করা যায়।</p></details>
+        <details class="faq-item"><summary>অ্যাকাউন্ট লাগবে?</summary><p>বর্তমান টুলগুলো ব্যবহার করতে অ্যাকাউন্ট প্রয়োজন নেই।</p></details>
+      </div>
+    </section>
+
+    <div class="ad-container" aria-label="বিজ্ঞাপনের স্থান">Advertisement</div>
   </div>
-  <div class="hero-visual" aria-hidden="true">
-    <div class="visual-glow"></div><div class="visual-card visual-main"><span>⚡</span><strong>Fast & Simple</strong><small>এক জায়গায় প্রয়োজনীয় টুলস</small></div>
-    <div class="visual-card visual-float visual-top">🧩 Modular Engine</div><div class="visual-card visual-float visual-bottom">📱 Mobile Ready</div>
-  </div>
-</section>
-
-<section class="stats-bar" aria-label="Toolkit Pro-এর সুবিধা">
-  <div><strong id="toolCount">—</strong><span>টুলস</span></div><div><strong>3+</strong><span>ক্যাটাগরি</span></div><div><strong>100%</strong><span>ফ্রি</span></div><div><strong>24/7</strong><span>অনলাইন</span></div>
-</section>
-
-<section class="section" id="featured">
-  <div class="section-head"><div><div class="eyebrow">EXPLORE TOOLS</div><h2>জনপ্রিয় ও দরকারি টুলস</h2><p>একই shared engine-এর মাধ্যমে প্রতিটি টুল স্বতন্ত্র module হিসেবে কাজ করে।</p></div><a class="text-link" href="/tools.html">সবগুলো দেখুন →</a></div>
-  <div class="cards" id="tool-cards"><div class="loading">টুল লোড হচ্ছে…</div></div>
-</section>
-
-<section class="section">
-  <div class="section-head"><div><div class="eyebrow">WHY TOOLKIT PRO</div><h2>কেন ব্যবহার করবেন?</h2></div></div>
-  <div class="feature-grid">
-    <article class="feature"><div class="feature-icon" aria-hidden="true">⚡</div><div><h3>দ্রুত</h3><p>জটিল সেটআপ ছাড়াই প্রয়োজনীয় কাজ করুন।</p></div></article>
-    <article class="feature"><div class="feature-icon" aria-hidden="true">📱</div><div><h3>মোবাইল-ফ্রেন্ডলি</h3><p>ফোন, ট্যাবলেট ও কম্পিউটারে responsive অভিজ্ঞতা।</p></div></article>
-    <article class="feature"><div class="feature-icon" aria-hidden="true">🛡️</div><div><h3>প্রাইভেসি-ফ্রেন্ডলি</h3><p>ব্রাউজার-ভিত্তিক টুলে প্রয়োজন না হলে ইনপুট সার্ভারে পাঠানো হয় না।</p></div></article>
-    <article class="feature"><div class="feature-icon" aria-hidden="true">🧩</div><div><h3>Scalable Engine</h3><p>নতুন টুল যোগ হবে module হিসেবে; মূল architecture একই থাকবে।</p></div></article>
-  </div>
-</section>
-
-<section class="section">
-  <div class="info info-cta"><div><div class="eyebrow">BUILT TO GROW</div><h2>আজকের ৩টি টুল থেকে আগামী দিনের হাজারো টুল</h2><p>Tool Registry + Shared Engine + Tool Modules—এই ভিত্তি বড় tool library-তেও একইভাবে কাজ করবে।</p></div><a class="primary" href="/tools.html">টুলস ব্যবহার করুন →</a></div>
-</section>
-
-<section class="section faq" aria-labelledby="faq-title">
-  <div class="section-head"><div><div class="eyebrow">FAQ</div><h2 id="faq-title">সাধারণ প্রশ্ন</h2></div></div>
-  <details><summary>নতুন টুল কীভাবে যোগ হবে?</summary><p>নতুন module এবং registry entry যোগ করলেই shared engine সেটি লোড করতে পারবে।</p></details>
-  <details><summary>মোবাইলে কি Toolkit Pro ব্যবহার করা যাবে?</summary><p>হ্যাঁ। Layout, controls ও tool workspace responsive করা হয়েছে।</p></details>
-  <details><summary>Toolkit Pro কি ফ্রি?</summary><p>বর্তমান foundation-এর লক্ষ্য হলো দরকারি টুলগুলো বিনামূল্যে ও সহজে ব্যবহারযোগ্য রাখা।</p></details>
-</section>
 </main>
 
-<footer class="footer">
-  <div class="footer-inner">
-    <div class="footer-brand"><a class="brand" href="/">🛠️ Toolkit <span>Pro</span></a><p>দৈনন্দিন কাজের দরকারি ফ্রি অনলাইন টুলস—সহজ, দ্রুত ও ব্যবহারবান্ধব।</p></div>
-    <div class="footer-col"><h3>জনপ্রিয় টুলস</h3><a href="/tools.html?tool=word-counter">Word Counter</a><a href="/tools.html?tool=json-formatter">JSON Formatter</a><a href="/tools.html?tool=password-generator">Password Generator</a></div>
-    <div class="footer-col"><h3>কুইক লিংক</h3><a href="/">হোম</a><a href="/tools.html">সব টুলস</a><a href="#faq-title">FAQ</a></div>
-    <div class="footer-col"><h3>গুরুত্বপূর্ণ</h3><a href="/tools.html">ক্যাটাগরি</a><a href="/api/health">System Status</a><span class="version-badge">v2 Foundation</span></div>
+<footer class="site-footer">
+  <div class="footer-container">
+    <div class="footer-grid">
+      <div class="footer-column"><h4>জনপ্রিয় টুলস</h4><ul class="footer-links"><li><a href="/tools.html?tool=word-counter">Word Counter</a></li><li><a href="/tools.html?tool=password-generator">Password Generator</a></li><li><a href="/tools.html?tool=json-formatter">JSON Formatter</a></li></ul></div>
+      <div class="footer-column"><h4>কুইক লিংক</h4><ul class="footer-links"><li><a href="/tools.html">সব টুলস</a></li><li><a href="#categories">ক্যাটাগরি</a></li><li><a href="#why">আমাদের সম্পর্কে</a></li><li><a href="#faq">যোগাযোগ</a></li></ul></div>
+      <div class="footer-column"><h4>আইনি</h4><ul class="footer-links"><li><a href="/privacy.html">গোপনীয়তা নীতি</a></li><li><a href="/terms.html">ব্যবহারের শর্তাবলী</a></li><li><a href="/disclaimer.html">দাবিত্যাগ</a></li></ul></div>
+      <div class="footer-column"><h4>গুরুত্বপূর্ণ</h4><ul class="footer-links"><li><a href="/api/health">System Status</a></li><li><a href="/robots.txt">Robots.txt</a></li><li><a href="/sitemap.xml">Sitemap</a></li></ul></div>
+    </div>
+    <div class="footer-bottom"><p class="copyright-text">© <span id="year"></span> Toolkit Pro — সর্বস্বত্ব সংরক্ষিত <span class="version-badge">v2 Foundation</span></p><div class="footer-credit"><span><i class="fas fa-shield-halved"></i> ১০০% ফ্রি টুলস</span><span class="divider"></span><span><i class="fas fa-check-circle"></i> Privacy-friendly foundation</span></div></div>
   </div>
-  <div class="footer-bottom"><span>© <span id="year"></span> Toolkit Pro — সর্বস্বত্ব সংরক্ষিত</span><span>🛡️ Free • ⚡ Fast • 📱 Responsive</span></div>
 </footer>
 <script src="/js/app.js" defer></script>
 </body>

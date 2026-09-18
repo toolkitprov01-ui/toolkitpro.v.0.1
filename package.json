@@ -7,9 +7,10 @@
   "scripts": {
     "start": "node server.js",
     "worker": "node workers/example-worker.js",
-    "test": "node --test test",
+    "test": "node --test test && npm run validate:modules",
     "db:seed": "node scripts/seed-tool-registry.js",
-    "test:syntax": "node --check server.js && node --check lib/job-queue.js && node --check workers/example-worker.js"
+    "test:syntax": "node --check server.js && node --check lib/job-queue.js && node --check workers/example-worker.js",
+    "validate:modules": "node scripts/validate-tool-modules.js"
   },
   "engines": {
     "node": ">=20"

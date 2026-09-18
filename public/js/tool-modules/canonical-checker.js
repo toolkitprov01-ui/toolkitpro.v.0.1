@@ -1,0 +1,4 @@
+const V="2026.09.18.16";
+export function render(){return '<div class="tool-form"><textarea id="ccI" rows="14" placeholder="HTML source paste করুন…"></textarea><button class="primary" id="ccG">Check canonical</button><div id="ccO" class="seo-results"></div></div>'}
+export function mount(){const q=id=>document.getElementById(id);q("ccG").onclick=()=>{const d=new DOMParser().parseFromString(q("ccI").value,"text/html"),a=[...d.querySelectorAll('link[rel="canonical"]')],h=a[0]?.href||"",msg=a.length===1?'<div class="seo-check ok"><strong>Canonical found</strong><span>'+h+'</span></div>':a.length===0?'<div class="seo-check warn"><strong>No canonical tag</strong><span>Add a canonical link where appropriate.</span></div>':'<div class="seo-check warn"><strong>Multiple canonical tags</strong><span>Found '+a.length+' canonical tags.</span></div>';q("ccO").innerHTML=msg}}
+export {V as MODULE_VERSION};

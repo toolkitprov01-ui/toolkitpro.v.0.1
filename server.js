@@ -3,9 +3,10 @@ const helmet = require("helmet");
 const path = require("path");
 const fs = require("fs");
 const { getAllTools, getToolById, REGISTRY_VERSION } = require("./config/tool-registry");
+const { listTools, getTool, getDatabaseInfo } = require("./lib/tool-registry-db");
 const { enqueue, getJob, getQueueInfo } = require("./lib/job-queue");
 
-const APP_VERSION = "2.0.3";
+const APP_VERSION = "2.2.0";
 const SITE_URL = "https://toolkitpro-v-0-1.onrender.com";
 const CACHE_TTL_MS = 60_000;
 
@@ -38,7 +39,7 @@ app.disable("x-powered-by");
 app.use(helmet({ contentSecurityPolicy: false }));
 app.use(express.json({ limit: "1mb" }));
 
-app.get("/api/search", (req, res) => {
+async function registryTools() {\n  if (getDatabaseInfo().configured) {\n    try { const tools = await listTools(); if (Array.isArray(tools) && tools.length) return tools; }\n    catch (error) { console.error("Registry database read failed:", error.message); }\n  }\n  return getAllTools();\n}\n\nasync function registryTool(id) {\n  if (getDatabaseInfo().configured) {\n    try { const tool = await getTool(id); if (tool) return tool; }\n    catch (error) { console.error("Registry database lookup failed:", error.message); }\n  }\n  return getToolById(id);\n}\n\napp.get("/api/search", async (req, res) => {
   const q = String(req.query.q || "").trim().toLowerCase();
   const category = String(req.query.category || "").trim().toLowerCase();
   const limit = Math.min(Math.max(Number(req.query.limit) || 24, 1), 100);
@@ -46,7 +47,7 @@ app.get("/api/search", (req, res) => {
   const key = "search:" + JSON.stringify({ q, category, limit, offset });
   const cached = cacheGet(key);
   if (cached) return sendCachedJson(res, key, cached);
-  const tools = getAllTools();
+  const tools = await registryTools();
   const tokens = q.split(/\s+/).filter(Boolean);
   const results = tools.map(tool => {
     if (category && tool.category.toLowerCase() !== category) return null;
@@ -70,7 +71,7 @@ app.get("/sitemap.xml", (req,res) => {
   const cached = cacheGet("sitemap");
   if (cached) return res.type("application/xml").set("Cache-Control","public, max-age=3600").send(cached);
   const staticUrls = ["/","/tools.html","/privacy.html","/terms.html","/disclaimer.html"];
-  const toolUrls = getAllTools().map(tool => "/tool/" + encodeURIComponent(tool.id));
+  const toolUrls = (await registryTools()).map(tool => "/tool/" + encodeURIComponent(tool.id));
   const urls = [...staticUrls, ...toolUrls];
   const xml = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
     urls.map(url => "  <url><loc>" + SITE_URL + url + "</loc></url>").join("\n") + "\n</urlset>\n";
@@ -82,7 +83,7 @@ app.use(express.static(publicDir, { etag:true, maxAge:0 }));
 
 app.get("/api/health", (req,res) => {
   res.set("Cache-Control","no-store");
-  res.json({success:true,service:"Toolkit Pro",status:"ok",version:APP_VERSION,registryVersion:REGISTRY_VERSION,cache:{type:"memory",entries:cache.size,ttlMs:CACHE_TTL_MS},queue:getQueueInfo(),timestamp:new Date().toISOString()});
+  res.json({success:true,service:"Toolkit Pro",status:"ok",version:APP_VERSION,registryVersion:REGISTRY_VERSION,cache:{type:"memory",entries:cache.size,ttlMs:CACHE_TTL_MS},registry:getDatabaseInfo(),queue:getQueueInfo(),timestamp:new Date().toISOString()});
 });
 app.get("/api/tools",(req,res) => {
   const cached=cacheGet("tools"); const tools=cached||cacheSet("tools",getAllTools(),300_000);

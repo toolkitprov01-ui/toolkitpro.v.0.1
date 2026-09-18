@@ -1,0 +1,4 @@
+const V="2026.09.18.16";
+export function render(){return '<div class="tool-form"><textarea id="isa" rows="14" placeholder="HTML source paste করুন…"></textarea><button class="primary" id="isg">Analyze images</button><div id="iso" class="seo-results"></div></div>'}
+export function mount(){const q=id=>document.getElementById(id);q("isg").onclick=()=>{const d=new DOMParser().parseFromString(q("isa").value,"text/html"),a=[...d.images],bad=a.filter(x=>!x.alt?.trim()),lazy=a.filter(x=>!x.loading),out='<div class="status success">Images found: '+a.length+'</div><div class="seo-notes">Missing alt: '+bad.length+' · Without loading="lazy": '+lazy.length+'</div>'+a.map((x,i)=>'<div class="seo-check '+(x.alt?.trim()?'ok':'warn')+'"><strong>'+(i+1)+'. '+(x.alt?.trim()?'Alt present':'Missing alt')+'</strong><span>'+String(x.getAttribute("src")||"")+'</span></div>').join("");q("iso").innerHTML=out||"<p>No images found.</p>"}}
+export {V as MODULE_VERSION};

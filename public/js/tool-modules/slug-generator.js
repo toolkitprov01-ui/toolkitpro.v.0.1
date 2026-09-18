@@ -1,0 +1,4 @@
+const V="2026.09.18.13";
+export function render(){return '<div class="tool-form"><input id="sgI" placeholder="Your page title"><input id="sgO" readonly placeholder="seo-friendly-slug"><button class="primary" id="sgC">Copy slug</button></div>'}
+export function mount(){const q=id=>document.getElementById(id),make=()=>q("sgO").value=q("sgI").value.toLowerCase().trim().normalize("NFKD").replace(/[^\p{L}\p{N}\s-]/gu,"").replace(/[\s_-]+/g,"-").replace(/^-+|-+$/g,"");q("sgI").addEventListener("input",make);q("sgC").onclick=()=>navigator.clipboard?.writeText(q("sgO").value)}
+export {V as MODULE_VERSION};

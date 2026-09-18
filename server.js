@@ -45,9 +45,9 @@ app.get("/sitemap.xml",(req,res)=>{
   const staticUrls=["/","/tools.html","/privacy.html","/terms.html","/disclaimer.html"];
   const toolUrls=getAllTools().map(tool=>"/tool/"+encodeURIComponent(tool.id));
   const urls=[...staticUrls,...toolUrls];
-  const xml='<?xml version="1.0" encoding="UTF-8"?>\\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\\n'+
-    urls.map(url=>"  <url><loc>"+SITE_URL+url+"</loc></url>").join("\\n")+
-    "\\n</urlset>\\n";
+  const xml='<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'+
+    urls.map(url=>"  <url><loc>"+SITE_URL+url+"</loc></url>").join("\n")+
+    "\n</urlset>\n";
   res.type("application/xml").set("Cache-Control","public, max-age=3600").send(xml);
 });
 app.use(express.static(publicDir, { etag: true, maxAge: 0 }));

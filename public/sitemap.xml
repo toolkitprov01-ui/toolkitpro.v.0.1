@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-<url><loc>https://toolkitpro-v-0-1.onrender.com/</loc></url>
-<url><loc>https://toolkitpro-v-0-1.onrender.com/tools.html</loc></url>
+  <url><loc>https://toolkitpro-v-0-1.onrender.com/</loc></url>
+  <url><loc>https://toolkitpro-v-0-1.onrender.com/tools.html</loc></url>
+  <url><loc>https://toolkitpro-v-0-1.onrender.com/privacy.html</loc></url>
+  <url><loc>https://toolkitpro-v-0-1.onrender.com/terms.html</loc></url>
+  <url><loc>https://toolkitpro-v-0-1.onrender.com/disclaimer.html</loc></url>
 </urlset>

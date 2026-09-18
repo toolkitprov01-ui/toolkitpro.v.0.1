@@ -1,0 +1,27 @@
+{
+  "name": "toolkit-pro",
+  "version": "1.0.0",
+  "description": "Toolkit Pro - Your Everyday Tool Companion",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "test": "echo \"No tests specified yet\""
+  },
+  "keywords": [
+    "online-tools",
+    "web-tools",
+    "toolkit",
+    "utilities",
+    "toolkit-pro"
+  ],
+  "author": "Toolkit Pro Team",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "dotenv": "^17.2.2"
+  }
+}

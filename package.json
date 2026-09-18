@@ -8,20 +8,17 @@
     "dev": "node server.js",
     "test": "echo \"No tests specified yet\""
   },
-  "keywords": [
-    "online-tools",
-    "web-tools",
-    "toolkit",
-    "utilities",
-    "toolkit-pro"
-  ],
+  "keywords": ["online-tools","web-tools","toolkit","utilities","toolkit-pro"],
   "author": "Toolkit Pro Team",
   "license": "MIT",
-  "engines": {
-    "node": ">=20"
-  },
+  "engines": {"node": ">=20"},
   "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.2",
     "express": "^5.1.0",
-    "dotenv": "^17.2.2"
+    "express-rate-limit": "^8.1.0",
+    "helmet": "^8.1.0",
+    "pg": "^8.16.3",
+    "redis": "^5.8.2"
   }
 }

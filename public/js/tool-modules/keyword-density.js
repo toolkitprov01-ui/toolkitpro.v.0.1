@@ -1,0 +1,4 @@
+const V="2026.09.18.13";
+export function render(){return '<div class="tool-form"><textarea id="kdI" rows="12" placeholder="Content paste করুন…"></textarea><input id="kdK" placeholder="Optional target keyword"><button class="primary" id="kdG">Analyze</button><div id="kdO" class="seo-results"></div></div>'}
+export function mount(){const q=id=>document.getElementById(id);q("kdG").onclick=()=>{const w=(q("kdI").value.toLowerCase().match(/[\p{L}\p{N}]+/gu)||[]),k=q("kdK").value.trim().toLowerCase(),f={};w.forEach(x=>f[x]=(f[x]||0)+1);const a=k?[k]:Object.keys(f).sort((x,y)=>f[y]-f[x]).slice(0,15);q("kdO").innerHTML=a.map(x=>'<div class="seo-check ok"><strong>'+x+'</strong><span>'+((f[x]||0))+' · '+((f[x]||0)/Math.max(w.length,1)*100).toFixed(2)+'%</span></div>').join("")||"<p>Text দিন।"}}
+export {V as MODULE_VERSION};

@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1220">
+  <meta name="description" content="Toolkit Pro — Your Everyday Tool Companion. Free, fast and privacy-focused online tools.">
+  <title>Toolkit Pro — Your Everyday Tool Companion</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav">
+      <a class="brand" href="/" aria-label="Toolkit Pro home">
+        <span class="brand-mark">TP</span>
+        <span>Toolkit Pro</span>
+      </a>
+      <button class="theme-btn" id="themeToggle" type="button" aria-label="Toggle theme">☾</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero-inner">
+        <p class="eyebrow">FREE • FAST • PRIVACY-FOCUSED</p>
+        <h1>Your Everyday Tool Companion</h1>
+        <p class="hero-copy">Useful online tools for text, development, images, calculations, conversion, SEO and everyday tasks — all in one place.</p>
+        <div class="search-wrap">
+          <label class="sr-only" for="toolSearch">Search tools</label>
+          <input id="toolSearch" type="search" placeholder="Search tools..." autocomplete="off">
+        </div>
+      </div>
+    </section>
+
+    <section class="container tools-section">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">EXPLORE</p>
+          <h2>Popular Tool Categories</h2>
+        </div>
+        <span id="toolCount" class="count"></span>
+      </div>
+      <div id="toolGrid" class="tool-grid"></div>
+      <p id="emptyState" class="empty" hidden>No matching tools found.</p>
+    </section>
+
+    <section class="container health-section">
+      <div class="status-card">
+        <span class="status-dot"></span>
+        <span>Toolkit Pro system</span>
+        <strong id="healthStatus">Checking…</strong>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>© <span id="year"></span> Toolkit Pro</span>
+      <span>Your Everyday Tool Companion</span>
+    </div>
+  </footer>
+
+  <script src="/js/app.js" defer></script>
+</body>
+</html>

@@ -32,7 +32,7 @@ function sendCachedJson(res, key, value, ttl) {
 const escHtml = value => String(value ?? "").replace(/[&<>"']/g, c => ({
   "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
 }[c]));
-const escJson = value => JSON.stringify(value).replace(/</g, "\u003c");
+const escJson = value => JSON.stringify(value).replace(/</g, String.fromCharCode(92) + "u003c");
 
 app.disable("x-powered-by");
 app.use(helmet({ contentSecurityPolicy: false }));

@@ -83,7 +83,7 @@ app.get("/api/search", async (req, res) => {
   return sendCachedJson(res, key, { success:true, count:results.length, offset, limit, results:results.slice(offset, offset+limit) }, 60_000);
 });
 
-app.get("/sitemap.xml", (req,res) => {
+app.get("/sitemap.xml", async (req,res) => {
   const cached = cacheGet("sitemap");
   if (cached) return res.type("application/xml").set("Cache-Control","public, max-age=3600").send(cached);
   const staticUrls = ["/","/tools.html","/privacy.html","/terms.html","/disclaimer.html"];

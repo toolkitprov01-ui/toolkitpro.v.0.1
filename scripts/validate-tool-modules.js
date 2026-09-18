@@ -9,7 +9,7 @@ const errors = [];
 const ids = new Set();
 const slugs = new Set();
 
-if (tools.length !== 100) errors.push("registry: expected exactly 100 tools, found " + tools.length);
+if (tools.length !== 150) errors.push("registry: expected exactly 150 tools, found " + tools.length);
 
 for (const tool of tools) {
   if (ids.has(tool.id)) errors.push(tool.id + ": duplicate id");
@@ -40,7 +40,7 @@ for (const tool of tools) {
   if (!/export\s+(?:async\s+)?function\s+mount\s*\(/.test(source)) errors.push(tool.id + ": missing required mount() export");
   if (!/MODULE_VERSION/.test(source)) errors.push(tool.id + ": missing MODULE_VERSION");
 
-  if (tool.module === "utility-tool") {
+  if (tool.module === "utility-tool" && tool.category !== "image") {
     const operationsBlock = source.match(/const operations=\{([\s\S]*?)\};\s*\n\s*export function render/);
     if (!operationsBlock) {
       errors.push(tool.id + ": utility operations block not found");

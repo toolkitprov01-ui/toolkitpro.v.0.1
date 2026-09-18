@@ -40,6 +40,35 @@ async function loadUtility() {
   assert.match(operations["timezone-converter"]("2026-09-18T12:00:00Z Asia/Dhaka"), /2026/);
   assert.throws(() => operations["body-fat-calculator"]("30 35 170"), /waist must be greater/);
 
+
+  const fixtures = [
+    ["simple-interest-calculator","1000 10 2","200"],
+    ["percentage-increase-calculator","100 10","110"],
+    ["percentage-calculator","200 15","30"],
+    ["sum-calculator","1 2 3","6"],
+    ["factorial-calculator","5","120"],
+    ["prime-checker","17","Prime"],
+    ["even-odd-checker","8","Even"],
+    ["decimal-to-binary","10","1010"],
+    ["binary-to-decimal","1010","10"],
+    ["decimal-to-hex","255","ff"],
+    ["hex-to-decimal","ff","255"],
+    ["celsius-to-fahrenheit","0","32°F"],
+    ["fahrenheit-to-celsius","32","0°C"],
+    ["kilometers-to-miles","1","0.621371"],
+    ["miles-to-kilometers","1","1.60934"],
+    ["kilograms-to-pounds","1","2.20462"],
+    ["pounds-to-kilograms","1","0.453592"],
+    ["meters-to-feet","1","3.28084"],
+    ["feet-to-meters","1","0.3048"],
+    ["days-to-hours","2","48"],
+    ["hours-to-minutes","2","120"],
+    ["minutes-to-seconds","2","120"],
+  ];
+  for (const [id,input,expected] of fixtures) {
+    assert.equal(operations[id](input), expected, `fixture failed: ${id}`);
+  }
+
   console.log("Utility functional tests passed");
 })().catch(error => {
   console.error(error);

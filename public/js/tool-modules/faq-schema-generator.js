@@ -1,0 +1,4 @@
+const V="2026.09.18.15";
+export function render(){return '<div class="tool-form"><textarea id="fqI" rows="10" placeholder="প্রতি লাইনে: প্রশ্ন | উত্তর"></textarea><div class="actions"><button class="primary" id="fqG">Generate FAQ Schema</button><button class="secondary" id="fqC">Copy</button></div><textarea id="fqO" rows="14" readonly></textarea></div>'}
+export function mount(){const q=id=>document.getElementById(id);q("fqG").onclick=()=>{const main=q("fqI").value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean).map(x=>{const p=x.split("|"),name=(p.shift()||"").trim(),text=p.join("|").trim();return{"@type":"Question",name,acceptedAnswer:{"@type":"Answer",text}}});q("fqO").value=JSON.stringify({"@context":"https://schema.org","@type":"FAQPage",mainEntity:main},null,2)};q("fqC").onclick=()=>navigator.clipboard?.writeText(q("fqO").value)}
+export {V as MODULE_VERSION};

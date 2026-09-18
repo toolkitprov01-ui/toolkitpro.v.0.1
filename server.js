@@ -11,7 +11,7 @@ const PORT = process.env.PORT || 3000;
 
 applySecurity(app);
 app.use((req, res, next) => {
-  if (req.path === "/") res.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+  if (req.path === "/" || req.path === "/tools.html" || req.path.startsWith("/js/") || req.path.startsWith("/css/")) res.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
   next();
 });
 app.use(express.json({ limit: "1mb" }));

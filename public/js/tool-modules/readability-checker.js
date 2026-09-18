@@ -1,0 +1,4 @@
+const V="2026.09.18.16";
+export function render(){return '<div class="tool-form"><textarea id="rdI" rows="14" placeholder="Content paste করুন…"></textarea><button class="primary" id="rdG">Analyze readability</button><div id="rdO" class="seo-results"></div></div>'}
+export function mount(){const q=id=>document.getElementById(id);q("rdG").onclick=()=>{const t=q("rdI").value.trim(),sent=t?t.split(/[.!?]+/).filter(x=>x.trim()).length:0,words=t?t.split(/\s+/).filter(Boolean).length:0,chars=t.length,avg=sent?words/sent:0;q("rdO").innerHTML='<div class="seo-check ok"><strong>Words</strong><span>'+words+'</span></div><div class="seo-check ok"><strong>Sentences</strong><span>'+sent+'</span></div><div class="seo-check ok"><strong>Avg. words/sentence</strong><span>'+avg.toFixed(1)+'</span></div><div class="seo-notes">This is a simple readability signal, not a formal readability score.</div>'}}
+export {V as MODULE_VERSION};

@@ -6,3 +6,4 @@ services:
     startCommand: npm start
     plan: free
     autoDeploy: true
+    healthCheckPath: /api/health

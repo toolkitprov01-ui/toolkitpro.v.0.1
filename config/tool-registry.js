@@ -1,4 +1,4 @@
-const REGISTRY_VERSION="2026.09.18.14";
+const REGISTRY_VERSION="2026.09.18.15";
 
 const tools = [
   { id:"word-counter", name:"Word Counter", bn:"শব্দ গণনা", category:"text", categoryBn:"লেখা", icon:"📝", module:"word-counter", description:"শব্দ, অক্ষর ও লাইনের সংখ্যা গণনা করুন।" },
@@ -13,6 +13,11 @@ const tools = [
   { id:"slug-generator", name:"SEO Slug Generator", bn:"SEO Slug জেনারেটর", category:"seo", categoryBn:"SEO", icon:"🔗", module:"slug-generator", description:"Title থেকে clean, URL-friendly slug তৈরি করুন।" },
   { id:"schema-generator", name:"Schema Markup Generator", bn:"Schema Markup জেনারেটর", category:"seo", categoryBn:"SEO", icon:"🧩", module:"schema-generator", description:"Common Schema.org types-এর JSON-LD তৈরি করুন।" },
   { id:"utm-builder", name:"UTM Campaign Builder", bn:"UTM Campaign Builder", category:"seo", categoryBn:"SEO", icon:"📈", module:"utm-builder", description:"Marketing campaign-এর জন্য trackable UTM URL তৈরি করুন।" }
+  { id:"open-graph-preview", name:"Open Graph Preview", bn:"Open Graph প্রিভিউ", category:"seo", categoryBn:"SEO", icon:"📣", module:"open-graph-preview", description:"Social sharing-এর title ও description preview করুন।" },
+  { id:"faq-schema-generator", name:"FAQ Schema Generator", bn:"FAQ Schema জেনারেটর", category:"seo", categoryBn:"SEO", icon:"❓", module:"faq-schema-generator", description:"FAQ content থেকে JSON-LD structured data তৈরি করুন।" },
+  { id:"hreflang-generator", name:"Hreflang Generator", bn:"Hreflang জেনারেটর", category:"seo", categoryBn:"SEO", icon:"🌐", module:"hreflang-generator", description:"Multilingual pages-এর hreflang tags তৈরি করুন।" },
+  { id:"heading-analyzer", name:"Heading Analyzer", bn:"Heading Analyzer", category:"seo", categoryBn:"SEO", icon:"🧱", module:"heading-analyzer", description:"HTML-এর H1–H6 heading structure পরীক্ষা করুন।" },
+  { id:"link-analyzer", name:"Link Analyzer", bn:"Link Analyzer", category:"seo", categoryBn:"SEO", icon:"🔗", module:"link-analyzer", description:"HTML source-এর internal ও external links শনাক্ত করুন।" }
 ];
 
 function getAllTools(){ return tools; }

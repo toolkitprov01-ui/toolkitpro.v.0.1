@@ -204,3 +204,38 @@ body{-webkit-text-size-adjust:100%;text-rendering:optimizeLegibility}
   .cards .card-copy h3{font-size:.88rem}
 }
 @media(prefers-reduced-motion:reduce){.category-strip{scroll-behavior:auto}}
+
+
+/* Universal controls for dedicated tool modules v2026.09.19.1 */
+.tool-form input:not([type="checkbox"]):not([type="radio"]),
+.tool-form select{
+  display:block;width:100%;min-height:48px;margin:0 0 10px;padding:11px 14px;
+  border:1.5px solid var(--border);border-radius:12px;background:var(--input);
+  color:var(--text);outline:none;font:500 .95rem/1.45 var(--font);
+}
+.tool-form input::placeholder{color:var(--muted);opacity:.78}
+.tool-form input:focus,.tool-form select:focus{
+  border-color:var(--primary);background:var(--card);box-shadow:var(--focus-ring);
+}
+.tool-form select{appearance:auto;cursor:pointer}
+.tool-form .actions{
+  display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:12px;
+}
+.tool-form button.primary,.tool-form button.secondary{
+  min-height:44px;padding:9px 15px;border-radius:11px;cursor:pointer;font-weight:800;
+}
+.tool-form button.primary{
+  border:1px solid transparent;background:var(--gradient);color:#fff;
+  box-shadow:0 7px 18px rgba(37,99,235,.18);
+}
+.tool-form button.primary:hover{filter:brightness(.97);transform:translateY(-1px)}
+.tool-form button.secondary{
+  border:1px solid var(--border);background:var(--input);color:var(--text);
+}
+.tool-form button.secondary:hover{border-color:var(--primary);color:var(--primary)}
+.tool-form textarea[readonly]{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre-wrap}
+@media(max-width:640px){
+  .tool-form input:not([type="checkbox"]):not([type="radio"]),.tool-form select{min-height:46px;font-size:.94rem}
+  .tool-form .actions{gap:7px}
+  .tool-form button.primary,.tool-form button.secondary{min-height:42px;padding:8px 12px}
+}

@@ -28,7 +28,6 @@ const tools = [
   { id:"schema-validator", name:"Schema Validator", bn:"Schema Validator", category:"seo", categoryBn:"SEO", icon:"🧩", module:"schema-validator", description:"JSON-LD-এর JSON syntax ও schema type পরীক্ষা করুন।" },
   { id:"meta-tag-analyzer", name:"Meta Tag Analyzer", bn:"Meta Tag Analyzer", category:"seo", categoryBn:"SEO", icon:"🏷️", module:"meta-tag-analyzer", description:"গুরুত্বপূর্ণ SEO meta tags দ্রুত পরীক্ষা করুন।" },
   { id:"broken-link-checker", name:"Broken Link Checker", bn:"Broken Link Checker", category:"seo", categoryBn:"SEO", icon:"🔗", module:"broken-link-checker", description:"HTML source থেকে links বের করুন এবং broken-link testing-এর জন্য প্রস্তুত করুন।" }
-  }
 ];
 
 function getAllTools(){ return tools; }

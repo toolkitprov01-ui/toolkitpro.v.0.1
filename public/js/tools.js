@@ -1,267 +1,43 @@
-const toolDefinitions = [
-  {id:"word-counter",name:"Word Counter",icon:"📝"},
-  {id:"case-converter",name:"Case Converter",icon:"🔤"},
-  {id:"json-formatter",name:"JSON Formatter",icon:"{ }"},
-  {id:"base64",name:"Base64 Encoder / Decoder",icon:"🔐"},
-  {id:"url-encoder",name:"URL Encoder / Decoder",icon:"🔗"},
-  {id:"password-generator",name:"Password Generator",icon:"🛡️"},
-  {id:"uuid-generator",name:"UUID Generator",icon:"🆔"},
-  {id:"percentage",name:"Percentage Calculator",icon:"%"},
-  {id:"unit-converter",name:"Length Converter",icon:"📏"},
-  {id:"timestamp",name:"Unix Timestamp",icon:"⏱️"}
+const toolDefinitions=[
+{id:"word-counter",name:"Word Counter",bn:"ওয়ার্ড কাউন্টার",icon:"📝",category:"text",description:"শব্দ, অক্ষর ও লাইনের সংখ্যা দ্রুত গণনা করুন।"},
+{id:"case-converter",name:"Case Converter",bn:"কেস কনভার্টার",icon:"🔤",category:"text",description:"লেখাকে UPPERCASE, lowercase, Title Case বা Sentence case করুন।"},
+{id:"json-formatter",name:"JSON Formatter",bn:"JSON ফরম্যাটার",icon:"{ }",category:"developer",description:"JSON format, minify ও validate করুন।"},
+{id:"base64",name:"Base64 Encoder / Decoder",bn:"Base64 এনকোডার",icon:"🔐",category:"developer",description:"Unicode text Base64 encode বা decode করুন।"},
+{id:"url-encoder",name:"URL Encoder / Decoder",bn:"URL এনকোডার",icon:"🔗",category:"developer",description:"URL ও text নিরাপদে encode বা decode করুন।"},
+{id:"password-generator",name:"Password Generator",bn:"পাসওয়ার্ড জেনারেটর",icon:"🛡️",category:"security",description:"Crypto-secure random password তৈরি করুন।"},
+{id:"uuid-generator",name:"UUID Generator",bn:"UUID জেনারেটর",icon:"🆔",category:"developer",description:"Cryptographically random UUID v4 তৈরি করুন।"},
+{id:"percentage",name:"Percentage Calculator",bn:"শতকরা ক্যালকুলেটর",icon:"%",category:"utility",description:"X% of Y দ্রুত হিসাব করুন।"},
+{id:"unit-converter",name:"Length Converter",bn:"দৈর্ঘ্য কনভার্টার",icon:"📏",category:"utility",description:"দৈর্ঘ্যের বিভিন্ন unit-এর মধ্যে রূপান্তর করুন।"},
+{id:"timestamp",name:"Unix Timestamp",bn:"Unix টাইমস্ট্যাম্প",icon:"⏱️",category:"developer",description:"বর্তমান Unix timestamp বা ISO date রূপান্তর করুন।"}
 ];
-
-const list = document.querySelector("#toolList");
-const panel = document.querySelector("#toolPanel");
-
-const escapeHtml = value => String(value).replace(/[&<>"']/g, char => ({
-  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-}[char]));
-
-const button = (label, action) =>
-  `<button class="action" type="button" data-action="${action}">${label}</button>`;
-
-const templates = {
-  "word-counter": () => `
-    <h2>📝 Word Counter</h2>
-    <p class="tool-note">Counts words, characters and lines instantly in your browser.</p>
-    <div class="field"><textarea id="input" placeholder="Type or paste text here..."></textarea></div>
-    <div class="result" id="result">Words: 0\nCharacters: 0\nCharacters (no spaces): 0\nLines: 0</div>`,
-
-  "case-converter": () => `
-    <h2>🔤 Case Converter</h2>
-    <div class="field"><textarea id="input" placeholder="Enter text..."></textarea></div>
-    <div class="actions">${button("UPPERCASE","upper")}${button("lowercase","lower")}${button("Title Case","title")}${button("Sentence case","sentence")}</div>
-    <div class="result" id="result">Converted text will appear here.</div>`,
-
-  "json-formatter": () => `
-    <h2>{ } JSON Formatter</h2>
-    <div class="field"><textarea id="input" placeholder='{"name":"Toolkit Pro"}'></textarea></div>
-    <div class="actions">${button("Format","format")}${button("Minify","minify")}${button("Validate","validate")}</div>
-    <div class="result" id="result">Result will appear here.</div>`,
-
-  "base64": () => `
-    <h2>🔐 Base64 Encoder / Decoder</h2>
-    <div class="field"><textarea id="input" placeholder="Enter text..."></textarea></div>
-    <div class="actions">${button("Encode","encode")}${button("Decode","decode")}</div>
-    <div class="result" id="result">Result will appear here.</div>`,
-
-  "url-encoder": () => `
-    <h2>🔗 URL Encoder / Decoder</h2>
-    <div class="field"><textarea id="input" placeholder="Enter URL or text..."></textarea></div>
-    <div class="actions">${button("Encode","encode")}${button("Decode","decode")}</div>
-    <div class="result" id="result">Result will appear here.</div>`,
-
-  "password-generator": () => `
-    <h2>🛡️ Password Generator</h2>
-    <div class="field">
-      <label for="length">Length</label>
-      <input id="length" type="number" min="8" max="128" value="16">
-    </div>
-    <div class="actions">${button("Generate","generate")}</div>
-    <div class="result" id="result">Click Generate.</div>`,
-
-  "uuid-generator": () => `
-    <h2>🆔 UUID Generator</h2>
-    <p class="tool-note">Creates a cryptographically random UUID v4.</p>
-    <div class="actions">${button("Generate UUID","generate")}</div>
-    <div class="result" id="result">Click Generate.</div>`,
-
-  "percentage": () => `
-    <h2>% Percentage Calculator</h2>
-    <div class="field">
-      <label for="x">Percentage (X)</label><input id="x" type="number" step="any" placeholder="X">
-      <label for="y">Number (Y)</label><input id="y" type="number" step="any" placeholder="Y">
-    </div>
-    <div class="actions">${button("Calculate","calculate")}</div>
-    <div class="result" id="result">Result will appear here.</div>`,
-
-  "unit-converter": () => `
-    <h2>📏 Length Converter</h2>
-    <div class="field">
-      <label for="value">Value</label><input id="value" type="number" step="any" placeholder="Value">
-      <label for="from">From</label>
-      <select id="from">
-        <option value="m">Meters</option><option value="km">Kilometers</option><option value="cm">Centimeters</option>
-        <option value="mm">Millimeters</option><option value="mi">Miles</option><option value="yd">Yards</option>
-        <option value="ft">Feet</option><option value="in">Inches</option>
-      </select>
-      <label for="to">To</label>
-      <select id="to">
-        <option value="m">Meters</option><option value="km">Kilometers</option><option value="cm">Centimeters</option>
-        <option value="mm">Millimeters</option><option value="mi">Miles</option><option value="yd">Yards</option>
-        <option value="ft">Feet</option><option value="in">Inches</option>
-      </select>
-    </div>
-    <div class="actions">${button("Convert","convert")}</div>
-    <div class="result" id="result">Result will appear here.</div>`,
-
-  "timestamp": () => `
-    <h2>⏱️ Unix Timestamp</h2>
-    <div class="actions">${button("Current Timestamp","now")}</div>
-    <div class="field">
-      <label for="stamp">Unix timestamp (seconds)</label>
-      <input id="stamp" type="number" step="any" placeholder="Unix timestamp">
-    </div>
-    <div class="actions">${button("Convert Timestamp","date")}</div>
-    <div class="result" id="result">Result will appear here.</div>`
+const templates={
+"word-counter":()=>'<div class="field"><textarea id="input" placeholder="আপনার লেখা এখানে লিখুন বা paste করুন…"></textarea></div><div class="result-grid"><div><b id="words">0</b><span>শব্দ</span></div><div><b id="chars">0</b><span>অক্ষর</span></div><div><b id="charsNo">0</b><span>স্পেস ছাড়া</span></div><div><b id="lines">0</b><span>লাইন</span></div></div>',
+"case-converter":()=>'<div class="field"><textarea id="input" placeholder="আপনার text লিখুন…"></textarea></div><div class="actions">'+button("UPPERCASE","upper")+button("lowercase","lower")+button("Title Case","title")+button("Sentence case","sentence")+'</div><div class="result" id="result">রূপান্তরিত লেখা এখানে দেখাবে।</div>',
+"json-formatter":()=>'<div class="field"><textarea id="input" placeholder=\'{"name":"Toolkit Pro"}\'></textarea></div><div class="actions">'+button("Format","format")+button("Minify","minify")+button("Validate","validate")+'</div><div class="result" id="result">Result এখানে দেখাবে।</div>',
+"base64":()=>'<div class="field"><textarea id="input" placeholder="Text লিখুন…"></textarea></div><div class="actions">'+button("Encode","encode")+button("Decode","decode")+'</div><div class="result" id="result">Result এখানে দেখাবে।</div>',
+"url-encoder":()=>'<div class="field"><textarea id="input" placeholder="URL বা text লিখুন…"></textarea></div><div class="actions">'+button("Encode","encode")+button("Decode","decode")+'</div><div class="result" id="result">Result এখানে দেখাবে।</div>',
+"password-generator":()=>'<div class="field"><label for="length">দৈর্ঘ্য</label><input id="length" type="number" min="8" max="128" value="16"></div><div class="actions">'+button("Generate","generate")+'</div><div class="result" id="result">Generate চাপুন।</div>',
+"uuid-generator":()=>'<p class="tool-note">একটি cryptographically random UUID v4 তৈরি করুন।</p><div class="actions">'+button("Generate UUID","generate")+'</div><div class="result" id="result">Generate চাপুন।</div>',
+"percentage":()=>'<div class="field two-col"><div><label for="x">শতকরা (X)</label><input id="x" type="number" step="any" placeholder="X"></div><div><label for="y">সংখ্যা (Y)</label><input id="y" type="number" step="any" placeholder="Y"></div></div><div class="actions">'+button("Calculate","calculate")+'</div><div class="result" id="result">Result এখানে দেখাবে।</div>',
+"unit-converter":()=>'<div class="field two-col"><div><label for="value">মান</label><input id="value" type="number" step="any" placeholder="Value"></div><div><label for="from">From</label><select id="from"><option value="m">Meters</option><option value="km">Kilometers</option><option value="cm">Centimeters</option><option value="mm">Millimeters</option><option value="mi">Miles</option><option value="yd">Yards</option><option value="ft">Feet</option><option value="in">Inches</option></select></div><div><label for="to">To</label><select id="to"><option value="m">Meters</option><option value="km">Kilometers</option><option value="cm">Centimeters</option><option value="mm">Millimeters</option><option value="mi">Miles</option><option value="yd">Yards</option><option value="ft">Feet</option><option value="in">Inches</option></select></div></div><div class="actions">'+button("Convert","convert")+'</div><div class="result" id="result">Result এখানে দেখাবে।</div>',
+"timestamp":()=>'<div class="actions">'+button("Current Timestamp","now")+'</div><div class="field"><label for="stamp">Unix timestamp (seconds)</label><input id="stamp" type="number" step="any" placeholder="Unix timestamp"></div><div class="actions">'+button("Convert Timestamp","date")+'</div><div class="result" id="result">Result এখানে দেখাবে।</div>'
 };
-
-function renderList(active) {
-  list.innerHTML = toolDefinitions.map(tool =>
-    `<button class="tool-btn ${tool.id === active ? "active" : ""}" data-tool="${tool.id}" type="button">${tool.icon} ${escapeHtml(tool.name)}</button>`
-  ).join("");
-}
-
-function countWords(value) {
-  const trimmed = value.trim();
-  return trimmed ? trimmed.split(/\s+/u).length : 0;
-}
-
-function toTitleCase(value) {
-  return value.toLocaleLowerCase().replace(/(^|[\s\-_])([\p{L}\p{N}])/gu, (_, prefix, char) =>
-    prefix + char.toLocaleUpperCase()
-  );
-}
-
-function toSentenceCase(value) {
-  const lower = value.toLocaleLowerCase();
-  return lower.replace(/(^|[.!?]\s+)([\p{L}\p{N}])/gu, (_, prefix, char) =>
-    prefix + char.toLocaleUpperCase()
-  );
-}
-
-function encodeBase64Unicode(value) {
-  const bytes = new TextEncoder().encode(value);
-  let binary = "";
-  for (const byte of bytes) binary += String.fromCharCode(byte);
-  return btoa(binary);
-}
-
-function decodeBase64Unicode(value) {
-  const binary = atob(value.trim());
-  const bytes = Uint8Array.from(binary, char => char.charCodeAt(0));
-  return new TextDecoder().decode(bytes);
-}
-
-function randomPassword(length) {
-  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%^&*()-_=+";
-  const bytes = new Uint32Array(length);
-  crypto.getRandomValues(bytes);
-  return Array.from(bytes, byte => chars[byte % chars.length]).join("");
-}
-
-function openTool(id) {
-  if (!templates[id]) return;
-  panel.innerHTML = templates[id]();
-  renderList(id);
-
-  panel.querySelectorAll("[data-action]").forEach(control => {
-    control.addEventListener("click", () => run(id, control.dataset.action));
-  });
-
-  if (id === "word-counter") {
-    panel.querySelector("#input").addEventListener("input", updateWordCount);
-  }
-}
-
-function updateWordCount() {
-  const value = panel.querySelector("#input").value;
-  panel.querySelector("#result").textContent =
-    `Words: ${countWords(value)}\nCharacters: ${value.length}\nCharacters (no spaces): ${value.replace(/\s/gu, "").length}\nLines: ${value ? value.split(/\r?\n/).length : 0}`;
-}
-
-function run(id, action) {
-  const input = panel.querySelector("#input");
-  const result = panel.querySelector("#result");
-
-  try {
-    if (id === "case-converter") {
-      const value = input.value;
-      result.textContent =
-        action === "upper" ? value.toLocaleUpperCase() :
-        action === "lower" ? value.toLocaleLowerCase() :
-        action === "title" ? toTitleCase(value) :
-        toSentenceCase(value);
-      return;
-    }
-
-    if (id === "json-formatter") {
-      const value = input.value.trim();
-      const parsed = JSON.parse(value);
-      result.textContent =
-        action === "format" ? JSON.stringify(parsed, null, 2) :
-        action === "minify" ? JSON.stringify(parsed) :
-        "Valid JSON ✓";
-      return;
-    }
-
-    if (id === "base64") {
-      result.textContent = action === "encode"
-        ? encodeBase64Unicode(input.value)
-        : decodeBase64Unicode(input.value);
-      return;
-    }
-
-    if (id === "url-encoder") {
-      result.textContent = action === "encode"
-        ? encodeURIComponent(input.value)
-        : decodeURIComponent(input.value);
-      return;
-    }
-
-    if (id === "password-generator") {
-      const length = Math.max(8, Math.min(128, Number(panel.querySelector("#length").value) || 16));
-      result.textContent = randomPassword(length);
-      return;
-    }
-
-    if (id === "uuid-generator") {
-      result.textContent = crypto.randomUUID();
-      return;
-    }
-
-    if (id === "percentage") {
-      const x = Number(panel.querySelector("#x").value);
-      const y = Number(panel.querySelector("#y").value);
-      if (!Number.isFinite(x) || !Number.isFinite(y)) throw new Error("Enter valid numbers.");
-      result.textContent = `${x}% of ${y} = ${x * y / 100}`;
-      return;
-    }
-
-    if (id === "unit-converter") {
-      const factors = {m:1, km:1000, cm:0.01, mm:0.001, mi:1609.344, yd:0.9144, ft:0.3048, in:0.0254};
-      const value = Number(panel.querySelector("#value").value);
-      const from = panel.querySelector("#from").value;
-      const to = panel.querySelector("#to").value;
-      if (!Number.isFinite(value)) throw new Error("Enter a valid number.");
-      const converted = value * factors[from] / factors[to];
-      result.textContent = `${value} ${from} = ${Number(converted.toPrecision(12))} ${to}`;
-      return;
-    }
-
-    if (id === "timestamp") {
-      if (action === "now") {
-        result.textContent = String(Math.floor(Date.now() / 1000));
-        return;
-      }
-      const timestamp = Number(panel.querySelector("#stamp").value);
-      if (!Number.isFinite(timestamp)) throw new Error("Enter a valid timestamp.");
-      const date = new Date(timestamp * 1000);
-      if (Number.isNaN(date.getTime())) throw new Error("Timestamp is outside the supported date range.");
-      result.textContent = date.toISOString();
-    }
-  } catch (error) {
-    result.textContent = `Error: ${error.message}`;
-  }
-}
-
-list.addEventListener("click", event => {
-  const id = event.target.closest("[data-tool]")?.dataset.tool;
-  if (id) openTool(id);
-});
-
-document.querySelector("#year").textContent = new Date().getFullYear();
-
-const initial = new URLSearchParams(location.search).get("tool");
-openTool(toolDefinitions.some(tool => tool.id === initial) ? initial : "word-counter");
+const list=document.querySelector("#toolCards"),panel=document.querySelector("#toolPanel"),search=document.querySelector("#toolSearch"),count=document.querySelector("#toolCount");
+const button=(label,action)=>'<button class="action" type="button" data-action="'+action+'">'+label+'</button>';
+const byId=id=>toolDefinitions.find(t=>t.id===id);
+function renderCards(filter="all",query=""){const q=query.trim().toLowerCase();const items=toolDefinitions.filter(t=>(filter==="all"||t.category===filter)&&(!q||(t.name+" "+t.bn+" "+t.description).toLowerCase().includes(q)));count.textContent=items.length+"টি টুল উপলব্ধ";list.innerHTML=items.length?items.map(t=>'<button class="tool-card" data-tool="'+t.id+'" type="button"><span class="tool-card-icon">'+t.icon+'</span><span class="tool-card-body"><strong>'+t.bn+'</strong><small>'+t.name+'</small><em>'+t.description+'</em></span><i class="fa-solid fa-arrow-right tool-arrow"></i></button>').join(""):'<div class="no-data"><i class="fa-solid fa-magnifying-glass"></i><h3>কোনো টুল পাওয়া যায়নি</h3><p>অন্য কোনো শব্দ দিয়ে চেষ্টা করুন।</p></div>';}
+function openTool(id){const t=byId(id);if(!t)return;document.querySelector("#runnerTitle").textContent=t.icon+" "+t.bn;document.querySelector("#runnerDescription").textContent=t.description;panel.innerHTML=templates[id]();document.querySelector("#toolRunner").classList.add("visible");panel.querySelectorAll("[data-action]").forEach(c=>c.addEventListener("click",()=>run(id,c.dataset.action)));if(id==="word-counter")panel.querySelector("#input").addEventListener("input",updateWordCount);document.querySelector("#toolRunner").scrollIntoView({behavior:"smooth",block:"start"});}
+function updateWordCount(){const v=panel.querySelector("#input").value;panel.querySelector("#words").textContent=v.trim()?v.trim().split(/\s+/u).length:0;panel.querySelector("#chars").textContent=v.length;panel.querySelector("#charsNo").textContent=v.replace(/\s/gu,"").length;panel.querySelector("#lines").textContent=v?v.split(/\r?\n/).length:0;}
+function encodeBase64Unicode(v){const bytes=new TextEncoder().encode(v);let b="";for(const x of bytes)b+=String.fromCharCode(x);return btoa(b)}
+function decodeBase64Unicode(v){const b=atob(v.trim());return new TextDecoder().decode(Uint8Array.from(b,c=>c.charCodeAt(0)))}
+function randomPassword(n){const chars="ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%^&*()-_=+";const bytes=new Uint32Array(n);crypto.getRandomValues(bytes);return Array.from(bytes,x=>chars[x%chars.length]).join("")}
+function titleCase(v){return v.toLocaleLowerCase().replace(/(^|[\s\-_])([\p{L}\p{N}])/gu,(_,p,c)=>p+c.toLocaleUpperCase())}
+function sentenceCase(v){const l=v.toLocaleLowerCase();return l.replace(/(^|[.!?]\s+)([\p{L}\p{N}])/gu,(_,p,c)=>p+c.toLocaleUpperCase())}
+function run(id,a){const input=panel.querySelector("#input"),result=panel.querySelector("#result");try{if(id==="case-converter"){const v=input.value;result.textContent=a==="upper"?v.toLocaleUpperCase():a==="lower"?v.toLocaleLowerCase():a==="title"?titleCase(v):sentenceCase(v);return}if(id==="json-formatter"){const p=JSON.parse(input.value.trim());result.textContent=a==="format"?JSON.stringify(p,null,2):a==="minify"?JSON.stringify(p):"Valid JSON ✓";return}if(id==="base64"){result.textContent=a==="encode"?encodeBase64Unicode(input.value):decodeBase64Unicode(input.value);return}if(id==="url-encoder"){result.textContent=a==="encode"?encodeURIComponent(input.value):decodeURIComponent(input.value);return}if(id==="password-generator"){const n=Math.max(8,Math.min(128,Number(panel.querySelector("#length").value)||16));result.textContent=randomPassword(n);return}if(id==="uuid-generator"){result.textContent=crypto.randomUUID();return}if(id==="percentage"){const x=Number(panel.querySelector("#x").value),y=Number(panel.querySelector("#y").value);if(!Number.isFinite(x)||!Number.isFinite(y))throw Error("সঠিক সংখ্যা দিন।");result.textContent=x+"% of "+y+" = "+x*y/100;return}if(id==="unit-converter"){const f={m:1,km:1000,cm:.01,mm:.001,mi:1609.344,yd:.9144,ft:.3048,in:.0254},v=Number(panel.querySelector("#value").value),from=panel.querySelector("#from").value,to=panel.querySelector("#to").value;if(!Number.isFinite(v))throw Error("সঠিক সংখ্যা দিন।");const r=v*f[from]/f[to];result.textContent=v+" "+from+" = "+Number(r.toPrecision(12))+" "+to;return}if(id==="timestamp"){if(a==="now"){result.textContent=Math.floor(Date.now()/1000);return}const s=Number(panel.querySelector("#stamp").value),d=new Date(s*1000);if(!Number.isFinite(s)||Number.isNaN(d.getTime()))throw Error("সঠিক timestamp দিন।");result.textContent=d.toISOString()}}catch(e){result.textContent="Error: "+e.message}}
+let active="all";
+document.querySelectorAll(".category-filter").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll(".category-filter").forEach(x=>x.classList.remove("active"));b.classList.add("active");active=b.dataset.category;renderCards(active,search.value)}));
+list.addEventListener("click",e=>{const id=e.target.closest("[data-tool]")?.dataset.tool;if(id)openTool(id)});
+search.addEventListener("input",()=>renderCards(active,search.value));
+document.querySelector("#runnerClose").addEventListener("click",()=>document.querySelector("#toolRunner").classList.remove("visible"));
+document.querySelector("#year").textContent=new Date().getFullYear();
+const initial=new URLSearchParams(location.search).get("tool");renderCards();openTool(byId(initial)?initial:"word-counter");

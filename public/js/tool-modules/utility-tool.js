@@ -48,7 +48,7 @@ const operations={
 "days-between-dates":v=>{const [a,b]=v.split(/[,\n]+/).map(x=>new Date(x.trim()));return String(Math.round(Math.abs(b-a)/86400000))+" days"},
 "calorie-calculator":v=>{const [age,weight,height,activity=1.2]=v.split(/[,\s]+/).map(Number);const bmr=10*weight+6.25*height-5*age+5;return String(Math.round(bmr*(Number(activity)||1.2)))+" kcal/day (approx.)"},
 "bmr-calculator":v=>{const [age,weight,height,sex="m"]=v.split(/[,\s]+/);const b=10*Number(weight)+6.25*Number(height)-5*Number(age)+(String(sex).toLowerCase().startsWith("f")?-161:5);return String(Math.round(b))+" kcal/day"},
-"body-fat-calculator":v=>{const [waist,neck,height]=v.split(/[,\s]+/).map(Number);return String((495/(1.0324-0.19077*Math.log10(waist-neck)+0.15456*Math.log10(height)))-450)+"% (approx.)"}
+"body-fat-calculator":v=>{const [waist,neck,height]=v.split(/[,\s]+/).map(Number);return String((495/(1.0324-0.19077*Math.log10(waist-neck)+0.15456*Math.log10(height)))-450)+"% (approx.)"},
 "text-to-uppercase":v=>v.toUpperCase(),
 "text-to-lowercase":v=>v.toLowerCase(),
 "title-case-converter":v=>v.toLowerCase().replace(/\b\w/g,c=>c.toUpperCase()),
@@ -117,7 +117,7 @@ const operations={
 "aspect-ratio-calculator":v=>{const [w,h]=v.split(/[,\s]+/).map(Number);const g=(a,b)=>b?g(b,a%b):a;const d=g(w,h);return `${w/d}:${h/d}`},
 "unix-to-date":v=>new Date(Number(v)*1000).toISOString(),
 "date-to-unix":v=>String(Math.floor(new Date(v).getTime()/1000)),
-"bmi-calculator":v=>{const [w,h]=v.split(/[,\\s]+/).filter(Boolean).map(Number);if(!(w>0&&h>0))throw new Error("Use weight kg and height cm");return String((w/Math.pow(h/100,2)).toFixed(2))},
+"bmi-calculator":v=>{const [w,h]=v.split(/[,\s]+/).filter(Boolean).map(Number);if(!(w>0&&h>0))throw new Error("Use weight kg and height cm");return String((w/Math.pow(h/100,2)).toFixed(2))},
 "json-stringify":v=>JSON.stringify(v),
 "json-parse-viewer":v=>JSON.stringify(JSON.parse(v),null,2),
 "html-escape":v=>v.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"),

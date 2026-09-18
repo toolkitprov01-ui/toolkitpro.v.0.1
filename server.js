@@ -98,7 +98,7 @@ app.post("/api/jobs",async (req,res) => {
   const type=String(req.body?.type||"").trim();
   const payload=req.body?.payload && typeof req.body.payload==="object" ? req.body.payload : {};
   if(type!=="example") return res.status(400).json({success:false,error:"Unsupported job type"});
-  try { const job=enqueue(type,payload); res.status(202).json({success:true,job:{id:job.id,type:job.type,status:job.status,createdAt:job.createdAt}}); }
+  try { const job=await enqueue(type,payload); res.status(202).json({success:true,job:{id:job.id,type:job.type,status:job.status,createdAt:job.createdAt}}); }
   catch(error) { res.status(503).json({success:false,error:"Job queue unavailable"}); }
 });
 app.get("/api/jobs/:id",(req,res) => {

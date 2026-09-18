@@ -1,3 +1,13 @@
+// Remove any legacy service worker so the tools workspace always uses current GitHub assets.
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.getRegistrations().then(regs => regs.forEach(reg => reg.unregister())).catch(() => {});
+    if ("caches" in window) {
+      caches.keys().then(keys => Promise.all(keys.map(key => caches.delete(key)))).catch(() => {});
+    }
+  });
+}
+
 const TOOLS=[
 {id:"word-counter",name:"ওয়ার্ড কাউন্টার",icon:"📝",cat:"text",desc:"শব্দ, অক্ষর, স্পেস ছাড়া অক্ষর, লাইন ও পড়ার সময়।"},
 {id:"case-converter",name:"কেস কনভার্টার",icon:"🔤",cat:"text",desc:"UPPERCASE, lowercase, Title Case ও Sentence case।"},

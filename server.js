@@ -5,7 +5,7 @@ const fs = require("fs");
 const { getAllTools, getToolById, REGISTRY_VERSION } = require("./config/tool-registry");
 const { enqueue, getJob } = require("./lib/job-queue");
 
-const APP_VERSION = "2.0.2";
+const APP_VERSION = "2.0.3";
 const SITE_URL = "https://toolkitpro-v-0-1.onrender.com";
 const CACHE_TTL_MS = 60_000;
 
@@ -47,7 +47,7 @@ app.get("/api/search", (req, res) => {
   const cached = cacheGet(key);
   if (cached) return sendCachedJson(res, key, cached);
   const tools = getAllTools();
-  const tokens = q.split(/s+/).filter(Boolean);
+  const tokens = q.split(/\s+/).filter(Boolean);
   const results = tools.map(tool => {
     if (category && tool.category.toLowerCase() !== category) return null;
     const haystack = [tool.id, tool.name, tool.bn, tool.description, tool.category, tool.categoryBn, ...tool.tags, ...tool.synonyms].join(" ").toLowerCase();

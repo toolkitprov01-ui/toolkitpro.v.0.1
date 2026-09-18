@@ -74,3 +74,48 @@ body.tool-active-page .runner-close:after{content:" সব টুলস";font:70
   body.tool-active-page .runner-head h2{font-size:1.25rem}
   body.tool-active-page .tool-runner textarea{min-height:190px}
 }
+
+/* v0.5 — premium UI/UX refinement */
+:root{--tool-radius:20px;--tool-ease:cubic-bezier(.2,.7,.2,1)}
+.tool-page-active body{background:var(--bg)}
+body.tool-active-page .site-header{position:sticky;top:0;z-index:100;backdrop-filter:blur(16px);background:color-mix(in srgb,var(--bg) 88%,transparent);border-bottom:1px solid var(--border)}
+body.tool-active-page .tools-main{padding-top:18px}
+body.tool-active-page .tools-toolbar{max-width:1100px;padding:0 4px;margin-bottom:12px}
+body.tool-active-page .tools-toolbar:before{content:"Toolkit Pro  /  Tool Workspace";display:block;font:600 .72rem 'Inter','Hind Siliguri',sans-serif;color:var(--text-secondary);letter-spacing:.01em}
+body.tool-active-page .tools-toolbar h2{display:none}
+body.tool-active-page .back-home{border:0;background:var(--bg-input);padding:8px 12px;border-radius:9px}
+body.tool-active-page .tools-shell{max-width:1100px}
+body.tool-active-page .tool-runner{padding:0;overflow:hidden;border:1px solid var(--border);background:var(--card);box-shadow:0 20px 70px rgba(15,23,42,.08)}
+body.tool-active-page .tool-runner:before{height:3px}
+body.tool-active-page .runner-head{margin:0;padding:22px 26px 18px;background:linear-gradient(180deg,rgba(37,99,235,.055),transparent);border-bottom:1px solid var(--border)}
+body.tool-active-page .runner-head h2{margin:9px 0 4px;font-size:clamp(1.35rem,2.6vw,1.8rem);letter-spacing:-.02em}
+body.tool-active-page .runner-head p{max-width:680px}
+body.tool-active-page .runner-close{display:flex;align-items:center;justify-content:center;gap:3px}
+body.tool-active-page #toolPanel{padding:24px 26px 30px}
+body.tool-active-page .tool-runner .field{margin:0 0 14px}
+body.tool-active-page .tool-runner textarea{min-height:260px;background:var(--bg);font-size:.94rem;line-height:1.7}
+body.tool-active-page .tool-runner input,body.tool-active-page .tool-runner select{background:var(--bg)}
+body.tool-active-page .tool-runner .actions{margin:12px 0 18px}
+body.tool-active-page .tool-runner .action{min-height:42px;padding:10px 17px;border-radius:10px}
+body.tool-active-page .result-wrap{padding-top:4px}
+body.tool-active-page .result-head{padding-bottom:7px}
+body.tool-active-page .tool-runner .result{min-height:110px;background:var(--bg);border-style:solid;border-color:var(--border);font-size:.88rem}
+body.tool-active-page .copy-result{min-height:34px}
+body.tool-active-page .result-grid{margin:0 0 18px;gap:10px}
+body.tool-active-page .result-grid div{background:var(--bg);padding:15px;border-radius:13px}
+body.tool-active-page .tool-note{background:var(--bg-input);border:1px solid var(--border);padding:12px 14px;border-radius:11px;margin:0 0 16px}
+body.tool-active-page .range-row{padding:0 2px}
+@media(min-width:900px){
+ body.tool-active-page .tool-runner .two-col{grid-template-columns:repeat(3,minmax(0,1fr));gap:12px!important}
+ body.tool-active-page .tool-runner .two-col>div{background:var(--bg-input);border:1px solid var(--border);border-radius:12px;padding:12px}
+}
+@media(max-width:700px){
+ body.tool-active-page .tools-main{padding:10px 0 35px}
+ body.tool-active-page .tools-toolbar{padding:0;margin-bottom:9px}
+ body.tool-active-page .tools-toolbar:before{font-size:.66rem}
+ body.tool-active-page .back-home{font-size:.72rem}
+ body.tool-active-page .runner-head{padding:18px 16px 15px}
+ body.tool-active-page #toolPanel{padding:18px 16px 22px}
+ body.tool-active-page .tool-runner textarea{min-height:200px}
+ body.tool-active-page .tool-runner .actions{position:sticky;bottom:8px;z-index:5;padding:8px;background:color-mix(in srgb,var(--card) 92%,transparent);backdrop-filter:blur(10px);border:1px solid var(--border);border-radius:12px;box-shadow:0 8px 25px rgba(15,23,42,.10)}
+}

@@ -1,4 +1,5 @@
-const API="/api/tools";let allTools=[];
+const API="/api/tools";
+// Keep legacy service workers from serving stale Toolkit Pro assets on every page.let allTools=[];
 
 // Remove any previously installed service worker/cache so stale homepage assets cannot override the live UI.
 if("serviceWorker" in navigator){

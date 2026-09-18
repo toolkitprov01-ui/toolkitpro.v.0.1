@@ -10,6 +10,10 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 applySecurity(app);
+app.use((req, res, next) => {
+  if (req.path === "/") res.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+  next();
+});
 app.use(express.json({ limit: "1mb" }));
 app.use(express.urlencoded({ extended: true, limit: "1mb" }));
 app.use(express.static(path.join(__dirname, "public")));

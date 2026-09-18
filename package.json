@@ -7,7 +7,8 @@
   "scripts": {
     "start": "node server.js",
     "worker": "node workers/example-worker.js",
-    "test": "node --check server.js && node --check lib/job-queue.js && node --check workers/example-worker.js"
+    "test": "node --check server.js && node --check lib/job-queue.js && node --check workers/example-worker.js",
+    "db:seed": "node scripts/seed-tool-registry.js"
   },
   "engines": {
     "node": ">=20"

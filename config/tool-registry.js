@@ -1,4 +1,4 @@
-const REGISTRY_VERSION="2026.09.18.16";
+const REGISTRY_VERSION="2026.09.18.17";
 
 const tools = [
   { id:"word-counter", name:"Word Counter", bn:"শব্দ গণনা", category:"text", categoryBn:"লেখা", icon:"📝", module:"word-counter", description:"শব্দ, অক্ষর ও লাইনের সংখ্যা গণনা করুন।" },
@@ -23,6 +23,11 @@ const tools = [
   { id:"http-status-checker", name:"HTTP Status Checker", bn:"HTTP Status Checker", category:"seo", categoryBn:"SEO", icon:"📡", module:"http-status-checker", description:"URL-এর HTTP response browser থেকে পরীক্ষা করুন।" },
   { id:"redirect-checker", name:"Redirect Checker", bn:"Redirect Checker", category:"seo", categoryBn:"SEO", icon:"↪️", module:"redirect-checker", description:"URL redirect response browser থেকে পরীক্ষা করুন।" },
   { id:"readability-checker", name:"Readability Checker", bn:"Readability Checker", category:"seo", categoryBn:"SEO", icon:"📖", module:"readability-checker", description:"Content-এর sentence ও word structure বিশ্লেষণ করুন।" }
+  { id:"sitemap-validator", name:"Sitemap Validator", bn:"Sitemap Validator", category:"seo", categoryBn:"SEO", icon:"🗺️", module:"sitemap-validator", description:"XML sitemap-এর basic structure ও URL entries যাচাই করুন।" },
+  { id:"robots-txt-tester", name:"Robots.txt Tester", bn:"Robots.txt Tester", category:"seo", categoryBn:"SEO", icon:"🤖", module:"robots-txt-tester", description:"robots.txt-এর basic Allow/Disallow rule পরীক্ষা করুন।" },
+  { id:"schema-validator", name:"Schema Validator", bn:"Schema Validator", category:"seo", categoryBn:"SEO", icon:"🧩", module:"schema-validator", description:"JSON-LD-এর JSON syntax ও schema type পরীক্ষা করুন।" },
+  { id:"meta-tag-analyzer", name:"Meta Tag Analyzer", bn:"Meta Tag Analyzer", category:"seo", categoryBn:"SEO", icon:"🏷️", module:"meta-tag-analyzer", description:"গুরুত্বপূর্ণ SEO meta tags দ্রুত পরীক্ষা করুন।" },
+  { id:"broken-link-checker", name:"Broken Link Checker", bn:"Broken Link Checker", category:"seo", categoryBn:"SEO", icon:"🔗", module:"broken-link-checker", description:"HTML source থেকে links বের করুন এবং broken-link testing-এর জন্য প্রস্তুত করুন।" }
 ];
 
 function getAllTools(){ return tools; }

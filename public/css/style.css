@@ -48,3 +48,6 @@ button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible{o
 
 /* Homepage refresh marker: 2026-09-18 */
 .homepage-refresh{content-visibility:auto}
+
+/* SEO Analyzer */
+.tool-help{margin-bottom:12px;color:var(--muted);font-size:.82rem}.seo-results{display:grid;gap:9px;margin-top:16px}.seo-check{display:flex;justify-content:space-between;gap:14px;padding:12px 14px;border:1px solid var(--border);border-radius:10px;background:var(--input)}.seo-check strong{white-space:nowrap}.seo-check span{color:var(--muted);text-align:right;overflow-wrap:anywhere}.seo-check.ok strong{color:#15803d}.seo-check.warn strong{color:#b45309}.seo-notes{margin-top:12px;padding:14px;border:1px solid var(--border);border-radius:10px;background:var(--input);color:var(--muted);font-size:.82rem}.seo-notes strong{color:var(--text)}.seo-notes ul{margin:7px 0 0 20px}.seo-notes p{margin-top:7px}@media(max-width:640px){.seo-check{display:block}.seo-check span{display:block;margin-top:4px;text-align:left}}

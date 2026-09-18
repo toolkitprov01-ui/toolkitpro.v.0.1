@@ -1,0 +1,4 @@
+const V="2026.09.18.15";
+export function render(){return '<div class="tool-form"><textarea id="laI" rows="14" placeholder="HTML source paste করুন…"></textarea><button class="primary" id="laG">Analyze links</button><div id="laO" class="seo-results"></div></div>'}
+export function mount(){const q=id=>document.getElementById(id);q("laG").onclick=()=>{const d=new DOMParser().parseFromString(q("laI").value,"text/html"),a=[...d.querySelectorAll("a[href]")],out=a.map(x=>{let h=x.getAttribute("href")||"";let type=/^https?:\/\//i.test(h)?"External":"Internal/relative";return '<div class="seo-check ok"><strong>'+type+'</strong><span>'+h+'</span></div>'});q("laO").innerHTML='<div class="status success">Links found: '+a.length+'</div>'+out.join("")}}
+export {V as MODULE_VERSION};

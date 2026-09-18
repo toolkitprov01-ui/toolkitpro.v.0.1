@@ -1,0 +1,4 @@
+const V="2026.09.18.15";
+export function render(){return '<div class="tool-form"><textarea id="haI" rows="14" placeholder="HTML source paste করুন…"></textarea><button class="primary" id="haG">Analyze headings</button><div id="haO" class="seo-results"></div></div>'}
+export function mount(){const q=id=>document.getElementById(id);q("haG").onclick=()=>{const d=new DOMParser().parseFromString(q("haI").value,"text/html"),a=[...d.querySelectorAll("h1,h2,h3,h4,h5,h6")];q("haO").innerHTML=a.map((x,i)=>'<div class="seo-check ok"><strong>'+(i+1)+'. '+x.tagName+'</strong><span>'+String(x.textContent).trim()+'</span></div>').join("")||"<p>No headings found.</p>"}}
+export {V as MODULE_VERSION};

@@ -1,4 +1,4 @@
-const REGISTRY_VERSION="2026.09.18.19";
+const REGISTRY_VERSION="2026.09.18.20";
 
 const tools = [
   { id:"word-counter", name:"Word Counter", bn:"শব্দ গণনা", category:"text", categoryBn:"লেখা", icon:"📝", module:"word-counter", description:"শব্দ, অক্ষর ও লাইনের সংখ্যা গণনা করুন।" },
@@ -100,14 +100,6 @@ const tools = [
   { id:"tax-calculator", name:"Tax Calculator", bn:"Tax ক্যালকুলেটর", category:"finance", categoryBn:"finance", icon:"🧾", module:"utility-tool", description:"মূল্য ও tax percentage থেকে মোট হিসাব করুন।" },
   { id:"compound-interest", name:"Compound Interest Calculator", bn:"Compound Interest", category:"finance", categoryBn:"finance", icon:"📈", module:"utility-tool", description:"মূলধন, হার ও সময় দিয়ে compound interest হিসাব করুন।" },
   { id:"loan-payment-calculator", name:"Loan Payment Calculator", bn:"Loan Payment", category:"finance", categoryBn:"finance", icon:"🏦", module:"utility-tool", description:"ঋণের basic monthly payment হিসাব করুন।" },
-  { id:"random-password", name:"Random Password", bn:"র‍্যান্ডম পাসওয়ার্ড", category:"security", categoryBn:"security", icon:"🔑", module:"utility-tool", description:"Browser crypto ব্যবহার করে random password তৈরি করুন।" },
-  { id:"text-hash", name:"Text Hash Generator", bn:"Text Hash জেনারেটর", category:"security", categoryBn:"security", icon:"#️⃣", module:"utility-tool", description:"টেক্সটের SHA-256 hash তৈরি করুন।" },
-  { id:"color-hex-rgb", name:"HEX to RGB", bn:"HEX থেকে RGB", category:"design", categoryBn:"design", icon:"🎨", module:"utility-tool", description:"HEX color-কে RGB মানে রূপান্তর করুন।" },
-  { id:"rgb-to-hex", name:"RGB to HEX", bn:"RGB থেকে HEX", category:"design", categoryBn:"design", icon:"🎨", module:"utility-tool", description:"RGB color-কে HEX মানে রূপান্তর করুন।" },
-  { id:"contrast-checker", name:"Contrast Checker", bn:"Contrast Checker", category:"design", categoryBn:"design", icon:"◐", module:"utility-tool", description:"দুই রঙের contrast ratio হিসাব করুন।" },
-  { id:"aspect-ratio-calculator", name:"Aspect Ratio Calculator", bn:"Aspect Ratio", category:"design", categoryBn:"design", icon:"▣", module:"utility-tool", description:"Width ও height থেকে aspect ratio হিসাব করুন।" },
-  { id:"px-to-rem", name:"PX to REM", bn:"PX থেকে REM", category:"design", categoryBn:"design", icon:"📐", module:"utility-tool", description:"Pixel থেকে rem রূপান্তর করুন।" },
-  { id:"rem-to-px", name:"REM to PX", bn:"REM থেকে PX", category:"design", categoryBn:"design", icon:"📐", module:"utility-tool", description:"REM থেকে pixel রূপান্তর করুন।" },
   { id:"lorem-ipsum-generator", name:"Lorem Ipsum Generator", bn:"Lorem Ipsum জেনারেটর", category:"writing", categoryBn:"writing", icon:"✍️", module:"utility-tool", description:"Placeholder text তৈরি করুন।" },
 ];
 

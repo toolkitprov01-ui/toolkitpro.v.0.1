@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="stylesheet" href="/css/style.css?v=10">
+  <link rel="stylesheet" href="/css/style.css?v=11">
 </head>
 <body>
 <header class="site-header">
@@ -43,7 +43,7 @@
     <p>Text, Developer, Security, SEO এবং Utility—প্রয়োজনীয় টুলস সরাসরি ব্রাউজারেই ব্যবহার করুন।</p>
     <div class="tools-search">
       <i class="fa-solid fa-magnifying-glass"></i>
-      <input id="toolSearch" aria-label="টুল খুঁজুন" id="toolSearch" type="search" placeholder="টুল খুঁজুন… যেমন JSON, Password, URL" autocomplete="off">
+      <input id="toolSearch" aria-label="টুল খুঁজুন" type="search" placeholder="টুল খুঁজুন… যেমন JSON, Password, URL" autocomplete="off">
       <kbd>/</kbd>
     </div>
   </div>
@@ -72,7 +72,7 @@
       <section class="tools-workspace">
         <div class="tool-cards" id="toolCards" aria-live="polite"></div>
 
-        <section class="tool-runner" id="toolRunner" aria-label="Selected tool" hidden>
+        <section class="tool-runner" id="toolRunner" aria-label="Selected tool">
           <div class="runner-head">
             <div>
               <span class="runner-badge"><i class="fa-solid fa-bolt"></i> এখন ব্যবহার করুন</span>
@@ -97,7 +97,7 @@
   </div>
 </footer>
 
-<script src="/js/tools.js?v=11" defer></script>
+<script src="/js/tools.js?v=12" defer></script>
 <script>
 window.addEventListener("DOMContentLoaded",()=>{
   const theme=document.getElementById("themeToggle"), menu=document.getElementById("menuToggle"), mobile=document.getElementById("mobileMenu");

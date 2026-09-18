@@ -1,4 +1,4 @@
-const REGISTRY_VERSION="2026.09.18.15";
+const REGISTRY_VERSION="2026.09.18.16";
 
 const tools = [
   { id:"word-counter", name:"Word Counter", bn:"শব্দ গণনা", category:"text", categoryBn:"লেখা", icon:"📝", module:"word-counter", description:"শব্দ, অক্ষর ও লাইনের সংখ্যা গণনা করুন।" },
@@ -18,6 +18,11 @@ const tools = [
   { id:"hreflang-generator", name:"Hreflang Generator", bn:"Hreflang জেনারেটর", category:"seo", categoryBn:"SEO", icon:"🌐", module:"hreflang-generator", description:"Multilingual pages-এর hreflang tags তৈরি করুন।" },
   { id:"heading-analyzer", name:"Heading Analyzer", bn:"Heading Analyzer", category:"seo", categoryBn:"SEO", icon:"🧱", module:"heading-analyzer", description:"HTML-এর H1–H6 heading structure পরীক্ষা করুন।" },
   { id:"link-analyzer", name:"Link Analyzer", bn:"Link Analyzer", category:"seo", categoryBn:"SEO", icon:"🔗", module:"link-analyzer", description:"HTML source-এর internal ও external links শনাক্ত করুন।" }
+  { id:"image-seo-analyzer", name:"Image SEO Analyzer", bn:"Image SEO Analyzer", category:"seo", categoryBn:"SEO", icon:"🖼️", module:"image-seo-analyzer", description:"Image alt text ও basic loading attributes পরীক্ষা করুন।" },
+  { id:"canonical-checker", name:"Canonical Tag Checker", bn:"Canonical Tag Checker", category:"seo", categoryBn:"SEO", icon:"🎯", module:"canonical-checker", description:"HTML-এ canonical tag আছে কি না পরীক্ষা করুন।" },
+  { id:"http-status-checker", name:"HTTP Status Checker", bn:"HTTP Status Checker", category:"seo", categoryBn:"SEO", icon:"📡", module:"http-status-checker", description:"URL-এর HTTP response browser থেকে পরীক্ষা করুন।" },
+  { id:"redirect-checker", name:"Redirect Checker", bn:"Redirect Checker", category:"seo", categoryBn:"SEO", icon:"↪️", module:"redirect-checker", description:"URL redirect response browser থেকে পরীক্ষা করুন।" },
+  { id:"readability-checker", name:"Readability Checker", bn:"Readability Checker", category:"seo", categoryBn:"SEO", icon:"📖", module:"readability-checker", description:"Content-এর sentence ও word structure বিশ্লেষণ করুন।" }
 ];
 
 function getAllTools(){ return tools; }

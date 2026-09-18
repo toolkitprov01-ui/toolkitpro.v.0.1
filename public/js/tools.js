@@ -1,3 +1,4 @@
+const TOOLS_APP_VERSION="2026.09.18.6";
 import {loadToolModule} from "./tool-engine.js";
 const $=s=>document.querySelector(s),state={tools:[],category:"all"};const workspace=$("#workspace"),cards=$("#cards"),search=$("#search"),panel=$("#panel"),filters=$("#filters");
 $("#year").textContent=new Date().getFullYear();
@@ -10,3 +11,5 @@ filters.addEventListener("click",e=>{const b=e.target.closest("[data-category]")
 document.addEventListener("keydown",e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="k"){e.preventDefault();search.focus()}if(e.key==="Escape"&&!workspace.hidden)closeTool()});$("#themeToggle")?.addEventListener("click",()=>{document.documentElement.dataset.theme=document.documentElement.dataset.theme==="dark"?"light":"dark";localStorage.setItem("theme",document.documentElement.dataset.theme);const i=$("#themeIcon");if(i)i.className=document.documentElement.dataset.theme==="dark"?"fas fa-sun":"fas fa-moon";});
 $("#menuToggle")?.addEventListener("click",()=>{const m=$("#mobileMenu"),b=$("#menuToggle"),open=!m.classList.contains("active");m.classList.toggle("active",open);b.setAttribute("aria-expanded",String(open));});
 window.addEventListener("popstate",()=>{const id=new URLSearchParams(location.search).get("tool");id?openTool(id,false):closeTool(false)});fetch("/api/tools",{headers:{Accept:"application/json"}}).then(r=>{if(!r.ok)throw new Error();return r.json()}).then(({tools})=>{state.tools=Array.isArray(tools)?tools:[];renderFilters();render();const id=new URLSearchParams(location.search).get("tool");if(id)openTool(id,false)}).catch(()=>cards.innerHTML="<p class='empty'>টুল লোড করা যায়নি। পরে আবার চেষ্টা করুন।</p>");
+
+window.ToolkitProToolsVersion=TOOLS_APP_VERSION;

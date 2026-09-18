@@ -1,44 +1,24 @@
 const express = require("express");
 const helmet = require("helmet");
 const path = require("path");
+const fs = require("fs");
 const { getAllTools, getToolById, REGISTRY_VERSION } = require("./config/tool-registry");
-
 const APP_VERSION = "2.0.0";
+const SITE_URL = "https://toolkitpro-v-0-1.onrender.com";
 const app = express();
 const PORT = Number(process.env.PORT) || 3000;
 const publicDir = path.join(__dirname, "public");
-
+const toolPageTemplate = fs.readFileSync(path.join(publicDir, "tool.html"), "utf8");
+const escHtml = value => String(value ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]));
+const escJson = value => JSON.stringify(value).replace(/</g, "\u003c");
 app.disable("x-powered-by");
 app.use(helmet({ contentSecurityPolicy: false }));
 app.use(express.json({ limit: "1mb" }));
 app.use(express.static(publicDir, { etag: true, maxAge: 0 }));
-
-app.get("/api/health", (req, res) => {
-  res.set("Cache-Control", "no-store");
-  res.json({
-    success: true,
-    service: "Toolkit Pro",
-    status: "ok",
-    version: APP_VERSION,
-    registryVersion: REGISTRY_VERSION,
-    timestamp: new Date().toISOString()
-  });
-});
-
-app.get("/api/tools", (req, res) => {
-  res.set("Cache-Control", "no-store");
-  const tools = getAllTools();
-  res.json({ success: true, count: tools.length, tools });
-});
-
-app.get("/api/tools/:id", (req, res) => {
-  res.set("Cache-Control", "no-store");
-  const tool = getToolById(req.params.id);
-  if (!tool) return res.status(404).json({ success: false, error: "Tool not found" });
-  res.json({ success: true, tool });
-});
-
-app.get("/tools", (req, res) => res.sendFile(path.join(publicDir, "tools.html")));
-app.get("/{*splat}", (req, res) => res.status(404).sendFile(path.join(publicDir, "404.html")));
-
-app.listen(PORT, () => console.log(`Toolkit Pro v${APP_VERSION} running on port ${PORT}`));
+app.get("/api/health",(req,res)=>{res.set("Cache-Control","no-store");res.json({success:true,service:"Toolkit Pro",status:"ok",version:APP_VERSION,registryVersion:REGISTRY_VERSION,timestamp:new Date().toISOString()})});
+app.get("/api/tools",(req,res)=>{res.set("Cache-Control","no-store");const tools=getAllTools();res.json({success:true,count:tools.length,tools})});
+app.get("/api/tools/:id",(req,res)=>{res.set("Cache-Control","no-store");const tool=getToolById(req.params.id);if(!tool)return res.status(404).json({success:false,error:"Tool not found"});res.json({success:true,tool})});
+app.get("/tools",(req,res)=>res.sendFile(path.join(publicDir,"tools.html")));
+app.get("/tool/:id",(req,res)=>{const tool=getToolById(req.params.id);if(!tool)return res.status(404).sendFile(path.join(publicDir,"404.html"));const url=SITE_URL+"/tool/"+encodeURIComponent(tool.id);const jsonLd={"@context":"https://schema.org","@type":"WebApplication",name:tool.name,alternateName:tool.bn,url,description:tool.description,applicationCategory:"UtilitiesApplication",operatingSystem:"Web",inLanguage:"bn-BD",offers:{"@type":"Offer",price:"0",priceCurrency:"USD"},isAccessibleForFree:true};const page=toolPageTemplate.replaceAll("__TOOL_TITLE__",escHtml(tool.bn||tool.name)).replaceAll("__TOOL_DESCRIPTION__",escHtml(tool.description)).replaceAll("__TOOL_URL__",escHtml(url)).replace("__TOOL_JSONLD__",escJson(jsonLd)).replace("__TOOL_ID__",escHtml(tool.id));res.set("Cache-Control","public, max-age=300");res.send(page)});
+app.get("/{*splat}",(req,res)=>res.status(404).sendFile(path.join(publicDir,"404.html")));
+app.listen(PORT,()=>console.log("Toolkit Pro v"+APP_VERSION+" running on port "+PORT));

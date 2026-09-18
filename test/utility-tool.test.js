@@ -103,7 +103,11 @@ async function loadUtility() {
   assert.equal(operations["base64-decoder"]("4ZGN4Ka+4KaV4Kaf4KawIPCfmoA="), "বাংলা 🚀");
   assert.equal(operations["title-case-converter"]("hello world"), "Hello World");
 
-  console.log("Utility functional tests passed");
+  const quotedCsv = 'name,note\\nAlice,"hello, world"';
+  assert.equal(
+    operations["csv-to-json"](quotedCsv),
+    '[\\n  {\\n    "name": "Alice",\\n    "note": "hello, world"\\n  }\\n]'
+  );\n  console.log("Utility functional tests passed");
 })().catch(error => {
   console.error(error);
   process.exit(1);

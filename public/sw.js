@@ -1,5 +1,11 @@
-const CACHE="toolkit-pro-v2";
-const ASSETS=["/","/tools.html","/css/style.css","/js/app.js?v=2","/js/tools.js?v=2","/manifest.json"];
+const CACHE="toolkit-pro-v4";
+const ASSETS=[
+  "/tools.html",
+  "/css/style.css?v=4",
+  "/js/app.js?v=4",
+  "/js/tools.js?v=2",
+  "/manifest.json"
+];
 
 self.addEventListener("install",event=>{
   event.waitUntil(
@@ -16,6 +22,13 @@ self.addEventListener("activate",event=>{
 });
 
 self.addEventListener("fetch",event=>{
+  const url=new URL(event.request.url);
+
+  if(url.origin===self.location.origin && (url.pathname==="/" || url.pathname==="/index.html")){
+    event.respondWith(fetch(event.request,{cache:"no-store"}));
+    return;
+  }
+
   event.respondWith(
     caches.match(event.request).then(cached=>cached||fetch(event.request))
   );

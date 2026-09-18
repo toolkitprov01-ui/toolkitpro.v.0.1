@@ -1,0 +1,4 @@
+const V="2026.09.18.13";
+export function render(){return '<div class="tool-form"><textarea id="smI" rows="10" placeholder="প্রতি লাইনে একটি URL"></textarea><div class="actions"><button class="primary" id="smG">Generate sitemap.xml</button><button class="secondary" id="smC">Copy</button></div><textarea id="smO" rows="12" readonly></textarea></div>'}
+export function mount(){const q=id=>document.getElementById(id);q("smG").onclick=()=>{const u=q("smI").value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);q("smO").value='<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'+u.map(x=>"  <url><loc>"+x.replace(/&/g,"&amp;")+"</loc></url>").join("\n")+"\n</urlset>"};q("smC").onclick=()=>navigator.clipboard?.writeText(q("smO").value)}
+export {V as MODULE_VERSION};

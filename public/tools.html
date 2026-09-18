@@ -11,8 +11,9 @@
     .tool-layout{display:grid;grid-template-columns:260px 1fr;gap:18px}
     .tool-list,.tool-panel{border:1px solid var(--border);border-radius:16px;background:var(--surface)}
     .tool-list{padding:10px;height:max-content}.tool-btn{display:block;width:100%;padding:12px 14px;margin:2px 0;border:0;border-radius:10px;background:transparent;color:var(--text);text-align:left;cursor:pointer}.tool-btn:hover,.tool-btn.active{background:var(--surface-2)}
-    .tool-panel{padding:24px;min-height:420px}.tool-panel h2{margin-top:0}.field{display:grid;gap:8px;margin:14px 0}.field label{font-weight:700}.field textarea,.field input,.field select{width:100%;padding:12px;border:1px solid var(--border);border-radius:10px;background:var(--bg);color:var(--text)}.field textarea{min-height:180px;resize:vertical}
-    .actions{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0}.action{padding:10px 14px;border:1px solid var(--border);border-radius:10px;background:var(--surface-2);color:var(--text);cursor:pointer}.result{padding:14px;border:1px dashed var(--border);border-radius:10px;white-space:pre-wrap;word-break:break-word;background:var(--bg)}.tool-note{color:var(--muted);font-size:.9rem}
+    .tool-panel{padding:24px;min-height:420px}.tool-panel h2{margin-top:0}.field{display:grid;gap:8px;margin:14px 0}.field label{font-weight:700}.field textarea,.field input,.field select{width:100%;padding:12px;border:1px solid var(--border);border-radius:10px;background:var(--bg);color:var(--text);box-sizing:border-box}.field textarea{min-height:180px;resize:vertical}
+    .actions{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0}.action{padding:10px 14px;border:1px solid var(--border);border-radius:10px;background:var(--surface-2);color:var(--text);cursor:pointer}.action:hover{transform:translateY(-1px)}
+    .result{padding:14px;border:1px dashed var(--border);border-radius:10px;white-space:pre-wrap;word-break:break-word;background:var(--bg);min-height:24px}.tool-note{color:var(--muted);font-size:.9rem}
     @media(max-width:760px){.tool-layout{grid-template-columns:1fr}.tool-list{display:grid;grid-template-columns:1fr 1fr;gap:4px}.tool-btn{font-size:.88rem}}
   </style>
 </head>
@@ -23,5 +24,5 @@
   <div class="tool-layout"><nav class="tool-list" id="toolList" aria-label="Tools"></nav><section class="tool-panel" id="toolPanel"></section></div>
 </div></main>
 <footer class="site-footer"><div class="container footer-inner"><span>© <span id="year"></span> Toolkit Pro</span><span>Your Everyday Tool Companion</span></div></footer>
-<script src="/js/tools.js" defer></script>
+<script src="/js/tools.js?v=2" defer></script>
 </body></html>

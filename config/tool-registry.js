@@ -157,6 +157,14 @@ const tools = [
   { id:"png-to-webp", name:"PNG to WebP", bn:"PNG থেকে WebP", category:"image", categoryBn:"image", icon:"🖼️", module:"utility-tool", description:"PNG image-কে WebP-তে রূপান্তর করুন।" },
   { id:"image-cropper", name:"Image Cropper", bn:"Image Cropper", category:"image", categoryBn:"image", icon:"✂️", module:"utility-tool", description:"Image crop করে নতুন image download করুন।" },
 ];
+  {"id":"jpg-to-pdf","name":"JPG to PDF","bn":"JPG থেকে PDF","category":"pdf","categoryBn":"PDF","icon":"🖼️","module":"pdf-tools","description":"JPG image এক বা একাধিক পেজের PDF-এ রূপান্তর করুন।"},
+  {"id":"png-to-pdf","name":"PNG to PDF","bn":"PNG থেকে PDF","category":"pdf","categoryBn":"PDF","icon":"🖼️","module":"pdf-tools","description":"PNG image-কে PDF-এ রূপান্তর করুন।"},
+  {"id":"pdf-to-jpg","name":"PDF to JPG","bn":"PDF থেকে JPG","category":"pdf","categoryBn":"PDF","icon":"📄","module":"pdf-tools","description":"PDF-এর প্রতিটি page JPG image হিসেবে export করুন।"},
+  {"id":"pdf-to-png","name":"PDF to PNG","bn":"PDF থেকে PNG","category":"pdf","categoryBn":"PDF","icon":"📄","module":"pdf-tools","description":"PDF pages PNG image হিসেবে export করুন।"},
+  {"id":"merge-pdf","name":"Merge PDF","bn":"PDF একত্র করুন","category":"pdf","categoryBn":"PDF","icon":"📚","module":"pdf-tools","description":"একাধিক PDF ক্রমানুসারে একটি PDF-এ merge করুন।"},
+  {"id":"split-pdf","name":"Split PDF","bn":"PDF ভাগ করুন","category":"pdf","categoryBn":"PDF","icon":"✂️","module":"pdf-tools","description":"PDF থেকে page set আলাদা PDF হিসেবে তৈরি করুন।"},
+  {"id":"extract-pdf-pages","name":"Extract PDF Pages","bn":"PDF পেজ বের করুন","category":"pdf","categoryBn":"PDF","icon":"📑","module":"pdf-tools","description":"PDF-এর page set আলাদা করে export করুন।"},
+  {"id":"pdf-compressor","name":"PDF Compressor","bn":"PDF Compressor","category":"pdf","categoryBn":"PDF","icon":"🗜️","module":"pdf-tools","description":"PDF পুনর্গঠন করে ফাইল size কমানোর চেষ্টা করুন।"},
 
 const normalizedTools = tools.map(tool => {
   const runtime = tool.runtime || "browser";

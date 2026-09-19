@@ -6,7 +6,7 @@ const { getAllTools, getToolById, REGISTRY_VERSION } = require("./config/tool-re
 const { listTools, getTool, getDatabaseInfo } = require("./lib/tool-registry-db");
 const { enqueue, getJob, getQueueInfo } = require("./lib/job-queue");
 
-const APP_VERSION = "2.2.1";
+const APP_VERSION = "2.2.2";
 const SITE_URL = "https://toolkitpro-v-0-1.onrender.com";
 const CACHE_TTL_MS = 60_000;
 
@@ -101,9 +101,16 @@ app.get("/api/health", async (req,res) => {
   res.set("Cache-Control","no-store");
   let database = getDatabaseInfo();
   let queue = getQueueInfo();
+  let databaseConnectivity = "not_configured";
+  if (database.configured) {
+    try { await require("./lib/tool-registry-db").getClient().query("SELECT 1"); databaseConnectivity = "ok"; }
+    catch (error) { databaseConnectivity = "error"; }
+  }
+  let redisConnectivity = queue.configured ? "configured" : "fallback";
+  if (queue.configured) { try { const { getQueueInfo } = require("./lib/job-queue"); redisConnectivity = getQueueInfo().configured ? "configured" : "error"; } catch { redisConnectivity = "error"; } }
   let databaseStatus = database.configured ? "configured" : "fallback";
   let queueStatus = queue.configured ? "configured" : "fallback";
-  res.json({success:true,service:"Toolkit Pro",status:"ok",version:APP_VERSION,registryVersion:REGISTRY_VERSION,cache:{type:"memory",entries:cache.size,ttlMs:CACHE_TTL_MS},database:{...database,status:databaseStatus},queue:{...queue,status:queueStatus},timestamp:new Date().toISOString()});
+  res.json({success:true,service:"Toolkit Pro",status:"ok",version:APP_VERSION,registryVersion:REGISTRY_VERSION,cache:{type:"memory",entries:cache.size,ttlMs:CACHE_TTL_MS},database:{...database,status:databaseStatus,connectivity:databaseConnectivity},queue:{...queue,status:queueStatus,connectivity:redisConnectivity},timestamp:new Date().toISOString()});
 });
 app.get("/api/tools",async (req,res) => {
   const cached=cacheGet("tools");

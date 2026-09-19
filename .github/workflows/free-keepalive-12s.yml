@@ -2,10 +2,13 @@ name: Free 12s Keepalive
 
 on:
   schedule:
-    # GitHub Actions cron has minute-level granularity.
-    # Each run therefore performs the 12-second loop below.
+    # GitHub Actions cron cannot run every 12 seconds.
+    # Each scheduled run therefore keeps the service warm with a 12-second loop.
     - cron: "*/5 * * * *"
   workflow_dispatch:
+
+permissions:
+  contents: read
 
 concurrency:
   group: free-12s-keepalive
@@ -16,20 +19,33 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 6
     steps:
-      - name: Ping production every 12 seconds
+      - name: Keep Render service warm
         env:
           HEALTH_URL: https://toolkitpro-v-0-1.onrender.com/api/health
+        shell: bash
         run: |
-          set -e
-          for i in $(seq 1 24); do
+          set -u
+
+          total=24
+          success=0
+
+          for i in $(seq 1 "$total"); do
             timestamp="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
-            if curl --fail --silent --show-error --max-time 10 "$HEALTH_URL" >/dev/null; then
-              echo "$timestamp keepalive $i/24 OK"
+
+            if curl               --fail               --silent               --show-error               --location               --connect-timeout 5               --max-time 10               --retry 2               --retry-delay 1               --retry-all-errors               -H "User-Agent: ToolkitPro-Free-Keepalive/1.0"               "$HEALTH_URL" >/dev/null; then
+              success=$((success + 1))
+              echo "$timestamp keepalive $i/$total OK"
             else
-              echo "$timestamp keepalive $i/24 FAILED"
+              echo "$timestamp keepalive $i/$total FAILED"
             fi
 
-            if [ "$i" -lt 24 ]; then
+            if [ "$i" -lt "$total" ]; then
               sleep 12
             fi
           done
+
+          echo "Keepalive completed: $success/$total successful requests."
+
+          # Do not fail the entire workflow because a single health ping failed.
+          # Render can recover on a later scheduled run.
+          exit 0

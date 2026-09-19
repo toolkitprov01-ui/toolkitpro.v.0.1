@@ -39,8 +39,45 @@ const escHtml = value => String(value ?? "").replace(/[&<>"']/g, c => ({
 const escJson = value => JSON.stringify(value).replace(/</g, String.fromCharCode(92) + "u003c");
 
 app.disable("x-powered-by");
+app.set("trust proxy", 1);
 app.use(helmet({ contentSecurityPolicy: false }));
 app.use(express.json({ limit: "1mb" }));
+const rateBuckets = new Map();
+const RATE_WINDOW_MS = Math.max(Number(process.env.RATE_LIMIT_WINDOW_MS) || 60_000, 10_000);
+const PDF_PREPARE_LIMIT = Math.max(Number(process.env.PDF_PREPARE_RATE_LIMIT) || 10, 1);
+const PDF_COMPLETE_LIMIT = Math.max(Number(process.env.PDF_COMPLETE_RATE_LIMIT) || 30, 1);
+const PDF_DOWNLOAD_LIMIT = Math.max(Number(process.env.PDF_DOWNLOAD_RATE_LIMIT) || 60, 1);
+const PDF_CLEANUP_LIMIT = Math.max(Number(process.env.PDF_CLEANUP_RATE_LIMIT) || 20, 1);
+
+function rateLimit(limit, bucket) {
+  return (req, res, next) => {
+    const now = Date.now();
+    const ip = req.ip || req.socket.remoteAddress || "unknown";
+    const key = bucket + ":" + ip;
+    let entry = rateBuckets.get(key);
+    if (!entry || entry.resetAt <= now) {
+      entry = { count: 0, resetAt: now + RATE_WINDOW_MS };
+      rateBuckets.set(key, entry);
+    }
+    entry.count += 1;
+    const remaining = Math.max(limit - entry.count, 0);
+    res.set("X-RateLimit-Limit", String(limit));
+    res.set("X-RateLimit-Remaining", String(remaining));
+    res.set("X-RateLimit-Reset", String(Math.ceil(entry.resetAt / 1000)));
+    if (entry.count > limit) {
+      res.set("Retry-After", String(Math.max(Math.ceil((entry.resetAt - now) / 1000), 1)));
+      return res.status(429).json({success:false,error:"Rate limit exceeded"});
+    }
+    next();
+  };
+}
+
+setInterval(() => {
+  const now = Date.now();
+  for (const [key, entry] of rateBuckets) if (entry.resetAt <= now) rateBuckets.delete(key);
+}, RATE_WINDOW_MS).unref();
+
+
 
 async function registryTools() {
   if (getDatabaseInfo().configured) {
@@ -130,7 +167,7 @@ app.get("/api/tools/:id",async (req,res) => {
   if(!tool) return res.status(404).json({success:false,error:"Tool not found"});
   res.json({success:true,tool});
 });
-app.post("/api/pdf/jobs/prepare", async (req,res) => {
+app.post("/api/pdf/jobs/prepare", rateLimit(PDF_PREPARE_LIMIT, "pdf-prepare"), async (req,res) => {
   try {
     const store = getArtifactStoreInfo();
     if (!store.configured || store.mode !== "s3") return res.status(503).json({success:false,error:"Object storage is not configured"});
@@ -146,7 +183,7 @@ app.post("/api/pdf/jobs/prepare", async (req,res) => {
   }
 });
 
-app.post("/api/pdf/jobs/:id/complete", async (req,res) => {
+app.post("/api/pdf/jobs/:id/complete", rateLimit(PDF_COMPLETE_LIMIT, "pdf-complete"), async (req,res) => {
   try {
     const jobId = String(req.params.id || "");
     const type = String(req.body?.type || "").trim();
@@ -169,7 +206,7 @@ app.post("/api/pdf/jobs/:id/complete", async (req,res) => {
   }
 });
 
-app.delete("/api/pdf/jobs/:id/artifacts", async (req,res) => {
+app.delete("/api/pdf/jobs/:id/artifacts", rateLimit(PDF_CLEANUP_LIMIT, "pdf-cleanup"), async (req,res) => {
   try {
     const jobId = String(req.params.id || "");
     if (!/^[a-f0-9-]{20,64}$/i.test(jobId)) return res.status(400).json({success:false,error:"Invalid job id"});
@@ -205,7 +242,7 @@ app.delete("/api/pdf/jobs/:id/artifacts", async (req,res) => {
   }
 });
 
-app.get("/api/pdf/artifacts/download", async (req,res) => {
+app.get("/api/pdf/artifacts/download", rateLimit(PDF_DOWNLOAD_LIMIT, "pdf-download"), async (req,res) => {
   try {
     const jobId = String(req.query.jobId || "");
     const key = String(req.query.key || "");

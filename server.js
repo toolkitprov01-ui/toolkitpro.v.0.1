@@ -108,9 +108,10 @@ app.get("/api/health", async (req,res) => {
   }
   const queueHealth = await getQueueHealth();
   const redisConnectivity = queueHealth.connectivity;
-  let databaseStatus = database.configured ? "configured" : "fallback";
-  let queueStatus = queue.configured ? "configured" : "fallback";
-  res.json({success:true,service:"Toolkit Pro",status:"ok",version:APP_VERSION,registryVersion:REGISTRY_VERSION,cache:{type:"memory",entries:cache.size,ttlMs:CACHE_TTL_MS},database:{...database,status:databaseStatus,connectivity:databaseConnectivity},queue:{...queue,status:queueStatus,connectivity:redisConnectivity},timestamp:new Date().toISOString()});
+  let databaseStatus = database.configured ? (databaseConnectivity === "ok" ? "configured" : "error") : "fallback";
+  let queueStatus = queue.configured ? (redisConnectivity === "ok" ? "configured" : "error") : "fallback";
+  const degraded = databaseStatus === "error" || queueStatus === "error";
+  res.status(degraded ? 503 : 200).json({success:true,service:"Toolkit Pro",status:degraded ? "degraded" : "ok",version:APP_VERSION,registryVersion:REGISTRY_VERSION,cache:{type:"memory",entries:cache.size,ttlMs:CACHE_TTL_MS},database:{...database,status:databaseStatus,connectivity:databaseConnectivity},queue:{...queue,status:queueStatus,connectivity:redisConnectivity},timestamp:new Date().toISOString()});
 });
 app.get("/api/tools",async (req,res) => {
   const cached=cacheGet("tools");

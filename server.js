@@ -153,6 +153,8 @@ app.post("/api/pdf/jobs/:id/complete", async (req,res) => {
     if (!PDF_JOB_TYPES.has(type)) return res.status(400).json({success:false,error:"Unsupported PDF job type"});
     const key = String(req.body?.inputKey || "");
     if (!key.startsWith("uploads/" + jobId + "/") || key.includes("..")) return res.status(400).json({success:false,error:"Invalid input artifact"});
+    const existing = await getJob(jobId);
+    if (existing) return res.status(409).json({success:false,error:"Job already exists"});
     const metadata = await getArtifactMetadata(key);
     if (!Number.isFinite(metadata.size) || metadata.size <= 0) return res.status(400).json({success:false,error:"Uploaded artifact is empty"});
     if (metadata.size > 25 * 1024 * 1024) return res.status(413).json({success:false,error:"PDF exceeds 25 MB"});

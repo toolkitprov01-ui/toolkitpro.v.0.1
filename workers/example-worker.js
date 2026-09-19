@@ -5,5 +5,6 @@ registerHandler("example", async payload => ({
   received: payload
 }));
 
-startWorker(Number(process.env.WORKER_INTERVAL_MS) || 250);
-console.log("Toolkit Pro worker started");
+const interval = Number(process.env.WORKER_INTERVAL_MS) || 250;
+startWorker(interval);
+console.log("Toolkit Pro worker started", { interval, queue: process.env.REDIS_URL ? "redis" : "memory" });

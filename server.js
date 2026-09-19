@@ -12,7 +12,9 @@ const { randomUUID, randomBytes, createHash, timingSafeEqual } = require("crypto
 const APP_VERSION = "2.2.2";
 const SITE_URL = "https://toolkitpro-v-0-1.onrender.com";
 const CACHE_TTL_MS = 60_000;
-const JOB_TOKEN_BYTES = Math.max(Number(process.env.PDF_JOB_TOKEN_BYTES) || 32, 16);\nconst PDF_ARTIFACT_RETENTION_MS = Math.max(Number(process.env.PDF_ARTIFACT_RETENTION_MS) || 24 * 60 * 60 * 1000, 60 * 60 * 1000);\nconst PDF_CLEANUP_SECRET = String(process.env.PDF_CLEANUP_SECRET || "");
+const JOB_TOKEN_BYTES = Math.max(Number(process.env.PDF_JOB_TOKEN_BYTES) || 32, 16);
+const PDF_ARTIFACT_RETENTION_MS = Math.max(Number(process.env.PDF_ARTIFACT_RETENTION_MS) || 24 * 60 * 60 * 1000, 60 * 60 * 1000);
+const PDF_CLEANUP_SECRET = String(process.env.PDF_CLEANUP_SECRET || "");
 
 function issueJobToken() {
   return randomBytes(JOB_TOKEN_BYTES).toString("base64url");

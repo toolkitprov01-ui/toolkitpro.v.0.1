@@ -1,0 +1,13 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm install --omit=dev
+
+COPY . .
+
+ENV NODE_ENV=production
+ENV WORKER_INTERVAL_MS=250
+
+CMD ["npm", "run", "worker"]

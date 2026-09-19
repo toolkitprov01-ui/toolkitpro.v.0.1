@@ -23,6 +23,7 @@
     "redis": "^5.8.3",
     "pg": "^8.16.3",
     "@aws-sdk/client-s3": "^3.888.0",
-    "@aws-sdk/s3-request-presigner": "^3.888.0"
+    "@aws-sdk/s3-request-presigner": "^3.888.0",
+    "pdf-lib": "^1.17.1"
   }
 }

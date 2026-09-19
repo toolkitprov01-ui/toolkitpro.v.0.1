@@ -6,7 +6,7 @@ const { getAllTools, getToolById, REGISTRY_VERSION } = require("./config/tool-re
 const { listTools, getTool, getDatabaseInfo } = require("./lib/tool-registry-db");
 const { enqueue, getJob, getQueueInfo } = require("./lib/job-queue");
 
-const APP_VERSION = "2.2.0";
+const APP_VERSION = "2.2.1";
 const SITE_URL = "https://toolkitpro-v-0-1.onrender.com";
 const CACHE_TTL_MS = 60_000;
 
@@ -97,9 +97,13 @@ app.get("/sitemap.xml", async (req,res) => {
 
 app.use(express.static(publicDir, { etag:true, maxAge:0 }));
 
-app.get("/api/health", (req,res) => {
+app.get("/api/health", async (req,res) => {
   res.set("Cache-Control","no-store");
-  res.json({success:true,service:"Toolkit Pro",status:"ok",version:APP_VERSION,registryVersion:REGISTRY_VERSION,cache:{type:"memory",entries:cache.size,ttlMs:CACHE_TTL_MS},registry:getDatabaseInfo(),queue:getQueueInfo(),timestamp:new Date().toISOString()});
+  let database = getDatabaseInfo();
+  let queue = getQueueInfo();
+  let databaseStatus = database.configured ? "configured" : "fallback";
+  let queueStatus = queue.configured ? "configured" : "fallback";
+  res.json({success:true,service:"Toolkit Pro",status:"ok",version:APP_VERSION,registryVersion:REGISTRY_VERSION,cache:{type:"memory",entries:cache.size,ttlMs:CACHE_TTL_MS},database:{...database,status:databaseStatus},queue:{...queue,status:queueStatus},timestamp:new Date().toISOString()});
 });
 app.get("/api/tools",async (req,res) => {
   const cached=cacheGet("tools");

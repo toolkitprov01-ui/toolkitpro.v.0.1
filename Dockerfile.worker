@@ -9,5 +9,6 @@ COPY . .
 
 ENV NODE_ENV=production
 ENV WORKER_INTERVAL_MS=250
+ENV REQUIRE_REDIS_WORKER=true
 
 CMD ["npm", "run", "worker"]

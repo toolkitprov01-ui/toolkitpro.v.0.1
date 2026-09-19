@@ -1,0 +1,27 @@
+name: PDF Artifact Cleanup
+
+on:
+  schedule:
+    - cron: "17 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Remove expired PDF artifacts
+        env:
+          CLEANUP_URL: https://toolkitpro-v-0-1.onrender.com/api/pdf/cleanup
+          CLEANUP_SECRET: ${{ secrets.PDF_CLEANUP_SECRET }}
+        shell: bash
+        run: |
+          set -u
+          if [ -z "$CLEANUP_SECRET" ]; then
+            echo "PDF_CLEANUP_SECRET is not configured; skipping cleanup."
+            exit 0
+          fi
+          curl --fail --silent --show-error --location             --connect-timeout 5 --max-time 30             -H "User-Agent: ToolkitPro-PDF-Cleanup/1.0"             -H "X-PDF-Cleanup-Secret: $CLEANUP_SECRET"             -X POST "$CLEANUP_URL"

@@ -45,7 +45,7 @@ export function render({tool}){
   const accept=imageId?imageTypes[imageId].join(","):"application/pdf,.pdf";
   const multiple=["jpg-to-pdf","png-to-pdf","merge-pdf"].includes(tool.id);
   const range=["split-pdf","extract-pdf-pages","delete-pdf-pages","rotate-pdf"].includes(tool.id);
-  return '<div class="tool-form"><div class="tool-toolbar"><span class="tool-toolbar-title">'+esc(tool.bn||tool.name)+'</span><div class="tool-actions"><button class="tool-action" id="pdfRun" type="button">প্রসেস করুন</button><button class="tool-action" id="pdfClear" type="button">মুছে ফেলুন</button></div></div><input id="pdfFiles" type="file" accept="'+accept+'"'+(multiple?" multiple":"")+'>'+ (range?'<label style="display:block;margin-top:10px">Page range <input id="pdfRange" type="text" inputmode="numeric" placeholder="যেমন: 1-3,5,7"></label>':'')+'<div id="pdfStatus" class="tool-note" aria-live="polite">ফাইল নির্বাচন করুন।</div><div id="pdfPreview" style="margin-top:12px"></div><a id="pdfDownload" class="tool-action" hidden download>ডাউনলোড</a><p class="tool-note">ফাইল আপনার ব্রাউজারেই প্রসেস করা হয়; বড় ফাইলের ক্ষেত্রে সময় বেশি লাগতে পারে।</p></div>'
+  return '<div class="tool-form"><div class="tool-toolbar"><span class="tool-toolbar-title">'+esc(tool.bn||tool.name)+'</span><div class="tool-actions"><button class="tool-action" id="pdfRun" type="button">প্রসেস করুন</button><button class="tool-action" id="pdfClear" type="button">মুছে ফেলুন</button></div></div><input id="pdfFiles" type="file" accept="'+accept+'"'+(multiple?" multiple":"")+'>'+ (range?'<label style="display:block;margin-top:10px">Page range <input id="pdfRange" type="text" inputmode="numeric" placeholder="যেমন: 1-3,5,7"></label>':'')+(tool.id==="rotate-pdf"?'<label style="display:block;margin-top:10px">Rotation <select id="pdfDegrees"><option value="90">90°</option><option value="180">180°</option><option value="270">270°</option></select></label>':'')+'<div id="pdfStatus" class="tool-note" aria-live="polite">ফাইল নির্বাচন করুন।</div><div id="pdfPreview" style="margin-top:12px"></div><a id="pdfDownload" class="tool-action" hidden download>ডাউনলোড</a><p class="tool-note">ফাইল আপনার ব্রাউজারেই প্রসেস করা হয়; বড় ফাইলের ক্ষেত্রে সময় বেশি লাগতে পারে।</p></div>'
 }
 
 async function imagesToPdf(files){
@@ -83,7 +83,7 @@ async function pdfImages(file,type){
 async function zipImages(items){const JSZip=await loadZip(),zip=new JSZip();for(const x of items)zip.file(x.name,x.blob);return zip.generateAsync({type:"blob"})}
 
 export async function mount({tool,root}){
-  const files=root.querySelector("#pdfFiles"),run=root.querySelector("#pdfRun"),clear=root.querySelector("#pdfClear"),status=root.querySelector("#pdfStatus"),preview=root.querySelector("#pdfPreview"),download=root.querySelector("#pdfDownload"),range=root.querySelector("#pdfRange");
+  const files=root.querySelector("#pdfFiles"),run=root.querySelector("#pdfRun"),clear=root.querySelector("#pdfClear"),status=root.querySelector("#pdfStatus"),preview=root.querySelector("#pdfPreview"),download=root.querySelector("#pdfDownload"),range=root.querySelector("#pdfRange"),degreesSelect=root.querySelector("#pdfDegrees");
   let objectUrls=[];
   const resetUrls=()=>{objectUrls.forEach(URL.revokeObjectURL);objectUrls=[]};
   const dl=(b,n,t="application/pdf")=>{resetUrls();const u=URL.createObjectURL(new Blob([b],{type:t}));objectUrls.push(u);download.href=u;download.download=n;download.hidden=false};
@@ -97,7 +97,7 @@ export async function mount({tool,root}){
       else if(tool.id==="split-pdf"){if(fs.length!==1)throw new Error("একটি PDF দিন");const r=await splitPdf(fs[0],range?.value),u=URL.createObjectURL(r.blob);objectUrls.push(u);preview.innerHTML='<a class="tool-action" download="toolkitpro-split-pdfs.zip" href="'+u+'">Split করা PDF ZIP ডাউনলোড</a>';status.textContent=r.count+"টি আলাদা PDF তৈরি হয়েছে।"}
       else if(tool.id==="extract-pdf-pages"){if(fs.length!==1)throw new Error("একটি PDF দিন");const r=await pageSubset(fs[0],range?.value);dl(r.bytes,r.name);status.textContent=r.count+"টি page export হয়েছে।"}
       else if(tool.id==="delete-pdf-pages"){if(fs.length!==1)throw new Error("একটি PDF দিন");const r=await mutatePdf(fs[0],range?.value,"delete");dl(r,"toolkitpro-pages-deleted.pdf");status.textContent="নির্বাচিত page মুছে PDF তৈরি হয়েছে।"}
-      else if(tool.id==="rotate-pdf"){if(fs.length!==1)throw new Error("একটি PDF দিন");const r=await mutatePdf(fs[0],range?.value,"90");dl(r,"toolkitpro-rotated.pdf");status.textContent="নির্বাচিত page 90° rotate হয়েছে।"}
+      else if(tool.id==="rotate-pdf"){if(fs.length!==1)throw new Error("একটি PDF দিন");const r=await mutatePdf(fs[0],range?.value,degreesSelect?.value||"90");dl(r,"toolkitpro-rotated.pdf");status.textContent="নির্বাচিত page "+(degreesSelect?.value||"90")+"° rotate হয়েছে।"}
       else if(["pdf-to-jpg","pdf-to-png"].includes(tool.id)){
         if(fs.length!==1)throw new Error("একটি PDF দিন");
         const type=tool.id.endsWith("png")?"image/png":"image/jpeg",items=await pdfImages(fs[0],type),zip=await zipImages(items),u=URL.createObjectURL(zip);objectUrls.push(u);

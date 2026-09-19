@@ -5,7 +5,8 @@ const fs = require("fs");
 const { getAllTools, getToolById, REGISTRY_VERSION } = require("./config/tool-registry");
 const { listTools, getTool, getDatabaseInfo } = require("./lib/tool-registry-db");
 const { enqueue, getJob, getQueueInfo, getQueueHealth } = require("./lib/job-queue");
-const { getArtifactStoreInfo, createJobKey, createUploadUrl, createDownloadUrl } = require("./lib/artifact-store");
+const { PDF_JOB_TYPES } = require("./lib/job-contract");
+const { getArtifactStoreInfo, createJobKey, createUploadUrl, createDownloadUrl, getArtifactMetadata } = require("./lib/artifact-store");
 const { randomUUID } = require("crypto");
 
 const APP_VERSION = "2.2.2";
@@ -145,10 +146,35 @@ app.post("/api/pdf/jobs/prepare", async (req,res) => {
   }
 });
 
+app.post("/api/pdf/jobs/:id/complete", async (req,res) => {
+  try {
+    const jobId = String(req.params.id || "");
+    const type = String(req.body?.type || "").trim();
+    if (!PDF_JOB_TYPES.has(type)) return res.status(400).json({success:false,error:"Unsupported PDF job type"});
+    const key = String(req.body?.inputKey || "");
+    if (!key.startsWith("uploads/" + jobId + "/") || key.includes("..")) return res.status(400).json({success:false,error:"Invalid input artifact"});
+    const metadata = await getArtifactMetadata(key);
+    if (!Number.isFinite(metadata.size) || metadata.size <= 0) return res.status(400).json({success:false,error:"Uploaded artifact is empty"});
+    if (metadata.size > 25 * 1024 * 1024) return res.status(413).json({success:false,error:"PDF exceeds 25 MB"});
+    const outputKey = "outputs/" + jobId + "/result.pdf";
+    const payload = {input:[{key,size:metadata.size}],output:{key:outputKey,size:0},options:req.body?.options && typeof req.body.options === "object" && !Array.isArray(req.body.options) ? req.body.options : {}};
+    const job = await enqueue(type, payload, {id:jobId});
+    res.status(202).json({success:true,job:{id:job.id,type:job.type,status:job.status,createdAt:job.createdAt},output:{key:outputKey}});
+  } catch (error) {
+    console.error("PDF job enqueue failed:", error.message);
+    const status = /Invalid|Unsupported|required|range|exceeds|scoped|artifact/i.test(error.message) ? 400 : 503;
+    res.status(status).json({success:false,error:status === 400 ? error.message : "Job queue or object storage unavailable"});
+  }
+});
+
 app.get("/api/pdf/artifacts/download", async (req,res) => {
   try {
+    const jobId = String(req.query.jobId || "");
     const key = String(req.query.key || "");
-    if (!key.startsWith("outputs/") || key.includes("..")) return res.status(400).json({success:false,error:"Invalid output artifact"});
+    const expected = "outputs/" + jobId + "/result.pdf";
+    if (!/^[a-f0-9-]{20,64}$/i.test(jobId) || key !== expected) return res.status(400).json({success:false,error:"Invalid output artifact"});
+    const job = await getJob(jobId);
+    if (!job || !PDF_JOB_TYPES.has(job.type) || job.status !== "completed" || job.payload?.output?.key !== key) return res.status(404).json({success:false,error:"Output artifact not available"});
     const url = await createDownloadUrl(key);
     if (!url) return res.status(503).json({success:false,error:"Object storage unavailable"});
     res.json({success:true,url,expiresInSeconds:getArtifactStoreInfo().signedUrlTtlSeconds});

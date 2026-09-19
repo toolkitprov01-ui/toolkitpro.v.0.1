@@ -5,7 +5,8 @@ const fs = require("fs");
 const { getAllTools, getToolById, REGISTRY_VERSION } = require("./config/tool-registry");
 const { listTools, getTool, getDatabaseInfo } = require("./lib/tool-registry-db");
 const { enqueue, getJob, getQueueInfo, getQueueHealth } = require("./lib/job-queue");
-const { getArtifactStoreInfo } = require("./lib/artifact-store");
+const { getArtifactStoreInfo, createJobKey, createUploadUrl, createDownloadUrl } = require("./lib/artifact-store");
+const { randomUUID } = require("crypto");
 
 const APP_VERSION = "2.2.2";
 const SITE_URL = "https://toolkitpro-v-0-1.onrender.com";
@@ -128,6 +129,35 @@ app.get("/api/tools/:id",async (req,res) => {
   if(!tool) return res.status(404).json({success:false,error:"Tool not found"});
   res.json({success:true,tool});
 });
+app.post("/api/pdf/jobs/prepare", async (req,res) => {
+  try {
+    const store = getArtifactStoreInfo();
+    if (!store.configured || store.mode !== "s3") return res.status(503).json({success:false,error:"Object storage is not configured"});
+    const jobId = randomUUID();
+    const filename = String(req.body?.filename || "input.pdf");
+    const contentType = String(req.body?.contentType || "application/pdf");
+    const key = createJobKey(jobId, filename);
+    const uploadUrl = await createUploadUrl(key, contentType);
+    res.status(201).json({success:true,job:{id:jobId,status:"created"},artifact:{key,uploadUrl,expiresInSeconds:store.signedUrlTtlSeconds,contentType}});
+  } catch (error) {
+    console.error("PDF upload preparation failed:", error.message);
+    res.status(503).json({success:false,error:"Object storage unavailable"});
+  }
+});
+
+app.get("/api/pdf/artifacts/download", async (req,res) => {
+  try {
+    const key = String(req.query.key || "");
+    if (!key.startsWith("outputs/") || key.includes("..")) return res.status(400).json({success:false,error:"Invalid output artifact"});
+    const url = await createDownloadUrl(key);
+    if (!url) return res.status(503).json({success:false,error:"Object storage unavailable"});
+    res.json({success:true,url,expiresInSeconds:getArtifactStoreInfo().signedUrlTtlSeconds});
+  } catch (error) {
+    console.error("PDF download URL failed:", error.message);
+    res.status(503).json({success:false,error:"Object storage unavailable"});
+  }
+});
+
 app.post("/api/jobs",async (req,res) => {
   const type=String(req.body?.type||"").trim();
   const payload=req.body?.payload && typeof req.body.payload==="object" ? req.body.payload : {};

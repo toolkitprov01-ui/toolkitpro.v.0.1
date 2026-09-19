@@ -4,7 +4,7 @@ const path = require("path");
 const fs = require("fs");
 const { getAllTools, getToolById, REGISTRY_VERSION } = require("./config/tool-registry");
 const { listTools, getTool, getDatabaseInfo } = require("./lib/tool-registry-db");
-const { enqueue, getJob, getQueueInfo, getQueueHealth } = require("./lib/job-queue");
+const { enqueue, getJob, getQueueInfo, getQueueHealth, listJobsByStatus } = require("./lib/job-queue");
 const { PDF_JOB_TYPES, PDF_WORKER_JOB_TYPES } = require("./lib/job-contract");
 const { getArtifactStoreInfo, createJobKey, createUploadUrl, createDownloadUrl, getArtifactMetadata, deleteArtifact } = require("./lib/artifact-store");
 const { randomUUID, randomBytes, createHash, timingSafeEqual } = require("crypto");
@@ -12,7 +12,7 @@ const { randomUUID, randomBytes, createHash, timingSafeEqual } = require("crypto
 const APP_VERSION = "2.2.2";
 const SITE_URL = "https://toolkitpro-v-0-1.onrender.com";
 const CACHE_TTL_MS = 60_000;
-const JOB_TOKEN_BYTES = Math.max(Number(process.env.PDF_JOB_TOKEN_BYTES) || 32, 16);
+const JOB_TOKEN_BYTES = Math.max(Number(process.env.PDF_JOB_TOKEN_BYTES) || 32, 16);\nconst PDF_ARTIFACT_RETENTION_MS = Math.max(Number(process.env.PDF_ARTIFACT_RETENTION_MS) || 24 * 60 * 60 * 1000, 60 * 60 * 1000);\nconst PDF_CLEANUP_SECRET = String(process.env.PDF_CLEANUP_SECRET || "");
 
 function issueJobToken() {
   return randomBytes(JOB_TOKEN_BYTES).toString("base64url");
@@ -269,6 +269,40 @@ app.delete("/api/pdf/jobs/:id/artifacts", rateLimit(PDF_CLEANUP_LIMIT, "pdf-clea
   } catch (error) {
     console.error("PDF artifact cleanup failed:", error.message);
     res.status(503).json({success:false,error:"Object storage unavailable"});
+  }
+});
+
+app.post("/api/pdf/cleanup", rateLimit(PDF_CLEANUP_LIMIT, "pdf-cleanup"), async (req,res) => {
+  try {
+    if (!PDF_CLEANUP_SECRET) return res.status(503).json({success:false,error:"Cleanup is not configured"});
+    const supplied = String(req.get("x-pdf-cleanup-secret") || "");
+    const expected = Buffer.from(PDF_CLEANUP_SECRET);
+    const actual = Buffer.from(supplied);
+    if (expected.length !== actual.length || !timingSafeEqual(expected, actual)) return res.status(403).json({success:false,error:"Invalid cleanup secret"});
+
+    const jobs = await listJobsByStatus(["completed","failed"], PDF_ARTIFACT_RETENTION_MS, 100);
+    let deletedJobs = 0, deletedArtifacts = 0;
+    for (const job of jobs) {
+      const keys = [
+        ...(Array.isArray(job.payload?.input) ? job.payload.input.map(item => item?.key).filter(Boolean) : []),
+        job.payload?.output?.key
+      ].filter(Boolean);
+      const uniqueKeys = [...new Set(keys)];
+      for (const key of uniqueKeys) {
+        if (!key.startsWith("uploads/" + job.id + "/") && key !== "outputs/" + job.id + "/result.pdf") continue;
+        try {
+          await deleteArtifact(key);
+          deletedArtifacts += 1;
+        } catch (error) {
+          if (!/ENOENT|NotFound|NoSuchKey|404/i.test(error.message)) throw error;
+        }
+      }
+      deletedJobs += 1;
+    }
+    res.json({success:true,retentionMs:PDF_ARTIFACT_RETENTION_MS,scannedJobs:jobs.length,deletedJobs,deletedArtifacts});
+  } catch (error) {
+    console.error("PDF automatic cleanup failed:", error.message);
+    res.status(503).json({success:false,error:"Artifact cleanup unavailable"});
   }
 });
 

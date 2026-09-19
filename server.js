@@ -6,7 +6,7 @@ const { getAllTools, getToolById, REGISTRY_VERSION } = require("./config/tool-re
 const { listTools, getTool, getDatabaseInfo } = require("./lib/tool-registry-db");
 const { enqueue, getJob, getQueueInfo, getQueueHealth } = require("./lib/job-queue");
 const { PDF_JOB_TYPES, PDF_WORKER_JOB_TYPES } = require("./lib/job-contract");
-const { getArtifactStoreInfo, createJobKey, createUploadUrl, createDownloadUrl, getArtifactMetadata } = require("./lib/artifact-store");
+const { getArtifactStoreInfo, createJobKey, createUploadUrl, createDownloadUrl, getArtifactMetadata, deleteArtifact } = require("./lib/artifact-store");
 const { randomUUID } = require("crypto");
 
 const APP_VERSION = "2.2.2";
@@ -166,6 +166,42 @@ app.post("/api/pdf/jobs/:id/complete", async (req,res) => {
     console.error("PDF job enqueue failed:", error.message);
     const status = /Invalid|Unsupported|required|range|exceeds|scoped|artifact/i.test(error.message) ? 400 : 503;
     res.status(status).json({success:false,error:status === 400 ? error.message : "Job queue or object storage unavailable"});
+  }
+});
+
+app.delete("/api/pdf/jobs/:id/artifacts", async (req,res) => {
+  try {
+    const jobId = String(req.params.id || "");
+    if (!/^[a-f0-9-]{20,64}$/i.test(jobId)) return res.status(400).json({success:false,error:"Invalid job id"});
+    const job = await getJob(jobId);
+    if (!job || !PDF_JOB_TYPES.has(job.type)) return res.status(404).json({success:false,error:"PDF job not found"});
+    if (!["completed","failed"].includes(job.status)) return res.status(409).json({success:false,error:"Artifacts can only be cleaned after job completion or failure"});
+
+    const keys = [
+      ...(Array.isArray(job.payload?.input) ? job.payload.input.map(item => item?.key).filter(Boolean) : []),
+      job.payload?.output?.key
+    ].filter(Boolean);
+    const uniqueKeys = [...new Set(keys)];
+
+    for (const key of uniqueKeys) {
+      if (!key.startsWith("uploads/" + jobId + "/") && key !== "outputs/" + jobId + "/result.pdf") {
+        return res.status(400).json({success:false,error:"Job contains an invalid artifact key"});
+      }
+    }
+
+    let deleted = 0;
+    for (const key of uniqueKeys) {
+      try {
+        await deleteArtifact(key);
+        deleted += 1;
+      } catch (error) {
+        if (!/ENOENT|NotFound|NoSuchKey|404/i.test(error.message)) throw error;
+      }
+    }
+    res.json({success:true,jobId,deletedArtifacts:deleted});
+  } catch (error) {
+    console.error("PDF artifact cleanup failed:", error.message);
+    res.status(503).json({success:false,error:"Object storage unavailable"});
   }
 });
 

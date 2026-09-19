@@ -239,7 +239,8 @@ app.delete("/api/pdf/jobs/:id/artifacts", rateLimit(PDF_CLEANUP_LIMIT, "pdf-clea
     const jobId = String(req.params.id || "");
     if (!/^[a-f0-9-]{20,64}$/i.test(jobId)) return res.status(400).json({success:false,error:"Invalid job id"});
     const job = await getJob(jobId);
-    if (!job || !PDF_JOB_TYPES.has(job.type) || !requireJobToken(req,res,job)) return res.status(404).json({success:false,error:"PDF job not found"});
+    if (!job || !PDF_JOB_TYPES.has(job.type)) return res.status(404).json({success:false,error:"PDF job not found"});
+    if (!requireJobToken(req,res,job)) return;
     if (!["completed","failed"].includes(job.status)) return res.status(409).json({success:false,error:"Artifacts can only be cleaned after job completion or failure"});
 
     const keys = [
@@ -277,7 +278,8 @@ app.get("/api/pdf/artifacts/download", rateLimit(PDF_DOWNLOAD_LIMIT, "pdf-downlo
     const expected = "outputs/" + jobId + "/result.pdf";
     if (!/^[a-f0-9-]{20,64}$/i.test(jobId) || key !== expected) return res.status(400).json({success:false,error:"Invalid output artifact"});
     const job = await getJob(jobId);
-    if (!job || !PDF_JOB_TYPES.has(job.type) || !requireJobToken(req,res,job) || job.status !== "completed" || job.payload?.output?.key !== key) return res.status(404).json({success:false,error:"Output artifact not available"});
+    if (!job || !PDF_JOB_TYPES.has(job.type) || job.status !== "completed" || job.payload?.output?.key !== key) return res.status(404).json({success:false,error:"Output artifact not available"});
+    if (!requireJobToken(req,res,job)) return;
     const url = await createDownloadUrl(key);
     if (!url) return res.status(503).json({success:false,error:"Object storage unavailable"});
     res.json({success:true,url,expiresInSeconds:getArtifactStoreInfo().signedUrlTtlSeconds});
@@ -302,7 +304,9 @@ app.get("/api/jobs/:id",async (req,res) => {
   const job=await getJob(req.params.id);
   if(!job) return res.status(404).json({success:false,error:"Job not found"});
   if (PDF_JOB_TYPES.has(job.type) && !requireJobToken(req,res,job)) return;
-  res.set("Cache-Control","no-store").json({success:true,job});
+  const safeJob = {...job};
+  delete safeJob.ownerTokenHash;
+  res.set("Cache-Control","no-store").json({success:true,job:safeJob});
 });
 
 app.get("/tools",(req,res)=>res.sendFile(path.join(publicDir,"tools.html")));

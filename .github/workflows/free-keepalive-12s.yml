@@ -1,0 +1,35 @@
+name: Free 12s Keepalive
+
+on:
+  schedule:
+    # GitHub Actions cron has minute-level granularity.
+    # Each run therefore performs the 12-second loop below.
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: free-12s-keepalive
+  cancel-in-progress: true
+
+jobs:
+  keepalive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - name: Ping production every 12 seconds
+        env:
+          HEALTH_URL: https://toolkitpro-v-0-1.onrender.com/api/health
+        run: |
+          set -e
+          for i in $(seq 1 24); do
+            timestamp="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+            if curl --fail --silent --show-error --max-time 10 "$HEALTH_URL" >/dev/null; then
+              echo "$timestamp keepalive $i/24 OK"
+            else
+              echo "$timestamp keepalive $i/24 FAILED"
+            fi
+
+            if [ "$i" -lt 24 ]; then
+              sleep 12
+            fi
+          done

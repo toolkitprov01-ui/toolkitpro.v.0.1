@@ -9,7 +9,6 @@ services:
   - type: worker
     name: toolkit-pro-worker
     env: docker
-    dockerfilePath: ./Dockerfile
-    dockerCommand: node workers/example-worker.js
+    dockerfilePath: ./Dockerfile.worker
     plan: free
     autoDeploy: true

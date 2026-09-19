@@ -5,7 +5,7 @@ const fs = require("fs");
 const { getAllTools, getToolById, REGISTRY_VERSION } = require("./config/tool-registry");
 const { listTools, getTool, getDatabaseInfo } = require("./lib/tool-registry-db");
 const { enqueue, getJob, getQueueInfo, getQueueHealth } = require("./lib/job-queue");
-const { PDF_JOB_TYPES } = require("./lib/job-contract");
+const { PDF_JOB_TYPES, PDF_WORKER_JOB_TYPES } = require("./lib/job-contract");
 const { getArtifactStoreInfo, createJobKey, createUploadUrl, createDownloadUrl, getArtifactMetadata } = require("./lib/artifact-store");
 const { randomUUID } = require("crypto");
 
@@ -150,7 +150,7 @@ app.post("/api/pdf/jobs/:id/complete", async (req,res) => {
   try {
     const jobId = String(req.params.id || "");
     const type = String(req.body?.type || "").trim();
-    if (!PDF_JOB_TYPES.has(type)) return res.status(400).json({success:false,error:"Unsupported PDF job type"});
+    if (!PDF_WORKER_JOB_TYPES.has(type)) return res.status(400).json({success:false,error:"PDF operation is not currently available"});
     const key = String(req.body?.inputKey || "");
     if (!key.startsWith("uploads/" + jobId + "/") || key.includes("..")) return res.status(400).json({success:false,error:"Invalid input artifact"});
     const existing = await getJob(jobId);

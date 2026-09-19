@@ -5,6 +5,7 @@ const fs = require("fs");
 const { getAllTools, getToolById, REGISTRY_VERSION } = require("./config/tool-registry");
 const { listTools, getTool, getDatabaseInfo } = require("./lib/tool-registry-db");
 const { enqueue, getJob, getQueueInfo, getQueueHealth } = require("./lib/job-queue");
+const { getArtifactStoreInfo } = require("./lib/artifact-store");
 
 const APP_VERSION = "2.2.2";
 const SITE_URL = "https://toolkitpro-v-0-1.onrender.com";
@@ -111,7 +112,7 @@ app.get("/api/health", async (req,res) => {
   let databaseStatus = database.configured ? (databaseConnectivity === "ok" ? "configured" : "error") : "fallback";
   let queueStatus = queue.configured ? (redisConnectivity === "ok" ? "configured" : "error") : "fallback";
   const degraded = databaseStatus === "error" || queueStatus === "error";
-  res.status(degraded ? 503 : 200).json({success:true,service:"Toolkit Pro",status:degraded ? "degraded" : "ok",version:APP_VERSION,registryVersion:REGISTRY_VERSION,cache:{type:"memory",entries:cache.size,ttlMs:CACHE_TTL_MS},database:{...database,status:databaseStatus,connectivity:databaseConnectivity},queue:{...queue,status:queueStatus,connectivity:redisConnectivity},timestamp:new Date().toISOString()});
+  res.status(degraded ? 503 : 200).json({success:true,service:"Toolkit Pro",status:degraded ? "degraded" : "ok",version:APP_VERSION,registryVersion:REGISTRY_VERSION,cache:{type:"memory",entries:cache.size,ttlMs:CACHE_TTL_MS},database:{...database,status:databaseStatus,connectivity:databaseConnectivity},queue:{...queue,status:queueStatus,connectivity:redisConnectivity},artifactStore,timestamp:new Date().toISOString()});
 });
 app.get("/api/tools",async (req,res) => {
   const cached=cacheGet("tools");

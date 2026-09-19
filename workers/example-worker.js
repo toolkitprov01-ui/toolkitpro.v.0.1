@@ -11,6 +11,15 @@ if (process.env.REQUIRE_REDIS_WORKER === "true" && !process.env.REDIS_URL && !pr
 
 const WORK_DIR = path.resolve(process.env.WORKER_TMP_DIR || path.join(process.cwd(), "worker-tmp"));
 const MAX_PDF_BYTES = 25 * 1024 * 1024;
+const WORKER_TIMEOUT_MS = Math.max(Number(process.env.WORKER_JOB_TIMEOUT_MS) || 120_000, 30_000);
+
+function withTimeout(promise, ms, label) {
+  let timer;
+  const timeout = new Promise((_, reject) => {
+    timer = setTimeout(() => reject(new Error(label + " timed out after " + ms + "ms")), ms);
+  });
+  return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
+}
 
 async function processPdf(type, payload) {
   const dir = await fs.mkdtemp(path.join(WORK_DIR, "pdf-"));
@@ -63,17 +72,16 @@ async function processPdf(type, payload) {
       await fs.writeFile(output, await out.save());
     }
     const result = await putArtifact(payload.output.key, output, "application/pdf");
+    if (!result || !result.key || !Number.isFinite(result.size) || result.size <= 0) throw new Error("Worker produced an empty output artifact");
     return { output: result };
   } finally {
     await fs.rm(dir, { recursive: true, force: true }).catch(() => {});
   }
 }
 
-registerHandler("merge-pdf", payload => processPdf("merge-pdf", payload));
-registerHandler("split-pdf", payload => processPdf("split-pdf", payload));
-registerHandler("extract-pdf-pages", payload => processPdf("extract-pdf-pages", payload));
-registerHandler("delete-pdf-pages", payload => processPdf("delete-pdf-pages", payload));
-registerHandler("rotate-pdf", payload => processPdf("rotate-pdf", payload));
+for (const type of ["merge-pdf", "split-pdf", "extract-pdf-pages", "delete-pdf-pages", "rotate-pdf"]) {
+  registerHandler(type, payload => withTimeout(processPdf(type, payload), WORKER_TIMEOUT_MS, "PDF job"));
+}
 
 registerHandler("example", async payload => ({ message: "Worker pipeline is ready", received: payload }));
 

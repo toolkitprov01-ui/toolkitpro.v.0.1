@@ -176,6 +176,7 @@ app.get("/api/health", async (req,res) => {
   let databaseStatus = database.configured ? (databaseConnectivity === "ok" ? "configured" : "error") : "fallback";
   let queueStatus = queue.configured ? (redisConnectivity === "ok" ? "configured" : "error") : "fallback";
   const degraded = databaseStatus === "error" || queueStatus === "error";
+  const artifactStore = getArtifactStoreInfo();
   res.status(degraded ? 503 : 200).json({success:true,service:"Toolkit Pro",status:degraded ? "degraded" : "ok",version:APP_VERSION,registryVersion:REGISTRY_VERSION,cache:{type:"memory",entries:cache.size,ttlMs:CACHE_TTL_MS},database:{...database,status:databaseStatus,connectivity:databaseConnectivity},queue:{...queue,status:queueStatus,connectivity:redisConnectivity},artifactStore,timestamp:new Date().toISOString()});
 });
 app.get("/api/tools",async (req,res) => {

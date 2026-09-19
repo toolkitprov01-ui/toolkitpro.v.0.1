@@ -1,4 +1,4 @@
-const MODULE_VERSION="2026.09.19.11";
+const MODULE_VERSION="2026.09.19.12";
 const PDF_LIB_URL="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js";
 const PDFJS_URL="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.min.mjs";
 const JSZIP_URL="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js";
@@ -44,7 +44,7 @@ export function render({tool}){
   const imageId=tool.id==="jpg-to-pdf"?"jpg":tool.id==="png-to-pdf"?"png":null;
   const accept=imageId?imageTypes[imageId].join(","):"application/pdf,.pdf";
   const multiple=["jpg-to-pdf","png-to-pdf","merge-pdf"].includes(tool.id);
-  const range=["split-pdf","extract-pdf-pages"].includes(tool.id);
+  const range=["split-pdf","extract-pdf-pages","delete-pdf-pages","rotate-pdf"].includes(tool.id);
   return '<div class="tool-form"><div class="tool-toolbar"><span class="tool-toolbar-title">'+esc(tool.bn||tool.name)+'</span><div class="tool-actions"><button class="tool-action" id="pdfRun" type="button">প্রসেস করুন</button><button class="tool-action" id="pdfClear" type="button">মুছে ফেলুন</button></div></div><input id="pdfFiles" type="file" accept="'+accept+'"'+(multiple?" multiple":"")+'>'+ (range?'<label style="display:block;margin-top:10px">Page range <input id="pdfRange" type="text" inputmode="numeric" placeholder="যেমন: 1-3,5,7"></label>':'')+'<div id="pdfStatus" class="tool-note" aria-live="polite">ফাইল নির্বাচন করুন।</div><div id="pdfPreview" style="margin-top:12px"></div><a id="pdfDownload" class="tool-action" hidden download>ডাউনলোড</a><p class="tool-note">ফাইল আপনার ব্রাউজারেই প্রসেস করা হয়; বড় ফাইলের ক্ষেত্রে সময় বেশি লাগতে পারে।</p></div>'
 }
 
@@ -61,6 +61,19 @@ async function mergePdf(files){
 async function pageSubset(file,range){
   const {PDFDocument}=await loadPdfLib(),src=await PDFDocument.load(await file.arrayBuffer()),idx=parsePageRange(range,src.getPageCount()),out=await PDFDocument.create(),pages=await out.copyPages(src,idx);pages.forEach(p=>out.addPage(p));
   return {bytes:await out.save(),name:"toolkitpro-pages.pdf",count:idx.length}
+}
+async function splitPdf(file,range){
+  const {PDFDocument}=await loadPdfLib(),JSZip=await loadZip(),src=await PDFDocument.load(await file.arrayBuffer()),raw=String(range||"").trim(),groups=[];
+  if(!raw){for(let i=0;i<src.getPageCount();i++)groups.push([i]);}
+  else for(const part of raw.split(",")){const m=part.trim().match(/^(\d+)(?:\s*-\s*(\d+))?$/);if(!m)throw new Error("Split range format: 1-3,5,7");let a=Number(m[1]),b=m[2]?Number(m[2]):a;if(a>b)[a,b]=[b,a];if(a<1||b>src.getPageCount())throw new Error("Page range-এর সংখ্যা PDF-এর বাইরে");groups.push(Array.from({length:b-a+1},(_,i)=>a+i-1))}
+  const zip=new JSZip();for(let i=0;i<groups.length;i++){const out=await PDFDocument.create(),pages=await out.copyPages(src,groups[i]);pages.forEach(p=>out.addPage(p));zip.file("part-"+(i+1)+".pdf",await out.save())}
+  return {blob:await zip.generateAsync({type:"blob"}),count:groups.length}
+}
+async function mutatePdf(file,range,mode){
+  const {PDFDocument,degrees}=await loadPdfLib(),src=await PDFDocument.load(await file.arrayBuffer()),selected=parsePageRange(range,src.getPageCount());
+  if(mode==="delete"){const remove=new Set(selected),out=await PDFDocument.create(),pages=await out.copyPages(src,src.getPageIndices().filter(i=>!remove.has(i)));if(!pages.length)throw new Error("সব page মুছে ফেলা যাবে না");pages.forEach(p=>out.addPage(p));return out.save()}
+  const rotation=Number(mode);if(![90,180,270,-90,-180,-270].includes(rotation))throw new Error("Rotation must be 90, 180, or 270 degrees");
+  selected.forEach(i=>{const p=src.getPage(i);p.setRotation(degrees((p.getRotation().angle+rotation+360)%360))});return src.save()
 }
 async function pdfImages(file,type){
   const pdfjs=await loadPdfJs(),doc=await pdfjs.getDocument({data:new Uint8Array(await file.arrayBuffer())}).promise,out=[];
@@ -81,7 +94,10 @@ export async function mount({tool,root}){
       validateFiles(fs,kind);status.textContent="প্রসেস হচ্ছে…";
       if(["jpg-to-pdf","png-to-pdf"].includes(tool.id)){const r=await imagesToPdf(fs);dl(r.bytes,r.name);status.textContent="PDF তৈরি হয়েছে।"}
       else if(tool.id==="merge-pdf"){if(fs.length<2)throw new Error("Merge করতে কমপক্ষে 2টি PDF দিন");const r=await mergePdf(fs);dl(r.bytes,r.name);status.textContent=fs.length+"টি PDF merge হয়েছে।"}
-      else if(["split-pdf","extract-pdf-pages"].includes(tool.id)){if(fs.length!==1)throw new Error("একটি PDF দিন");const r=await pageSubset(fs[0],range?.value);dl(r.bytes,r.name);status.textContent=r.count+"টি page export হয়েছে।"}
+      else if(tool.id==="split-pdf"){if(fs.length!==1)throw new Error("একটি PDF দিন");const r=await splitPdf(fs[0],range?.value),u=URL.createObjectURL(r.blob);objectUrls.push(u);preview.innerHTML='<a class="tool-action" download="toolkitpro-split-pdfs.zip" href="'+u+'">Split করা PDF ZIP ডাউনলোড</a>';status.textContent=r.count+"টি আলাদা PDF তৈরি হয়েছে।"}
+      else if(tool.id==="extract-pdf-pages"){if(fs.length!==1)throw new Error("একটি PDF দিন");const r=await pageSubset(fs[0],range?.value);dl(r.bytes,r.name);status.textContent=r.count+"টি page export হয়েছে।"}
+      else if(tool.id==="delete-pdf-pages"){if(fs.length!==1)throw new Error("একটি PDF দিন");const r=await mutatePdf(fs[0],range?.value,"delete");dl(r,"toolkitpro-pages-deleted.pdf");status.textContent="নির্বাচিত page মুছে PDF তৈরি হয়েছে।"}
+      else if(tool.id==="rotate-pdf"){if(fs.length!==1)throw new Error("একটি PDF দিন");const r=await mutatePdf(fs[0],range?.value,"90");dl(r,"toolkitpro-rotated.pdf");status.textContent="নির্বাচিত page 90° rotate হয়েছে।"}
       else if(["pdf-to-jpg","pdf-to-png"].includes(tool.id)){
         if(fs.length!==1)throw new Error("একটি PDF দিন");
         const type=tool.id.endsWith("png")?"image/png":"image/jpeg",items=await pdfImages(fs[0],type),zip=await zipImages(items),u=URL.createObjectURL(zip);objectUrls.push(u);

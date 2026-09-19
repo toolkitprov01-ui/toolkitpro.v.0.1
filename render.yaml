@@ -1,9 +1,15 @@
 services:
   - type: web
     name: toolkit-pro
-    env: node
-    buildCommand: npm install
-    startCommand: npm start
+    env: docker
+    dockerfilePath: ./Dockerfile
     plan: free
     autoDeploy: true
     healthCheckPath: /api/health
+  - type: worker
+    name: toolkit-pro-worker
+    env: docker
+    dockerfilePath: ./Dockerfile
+    dockerCommand: node workers/example-worker.js
+    plan: free
+    autoDeploy: true

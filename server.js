@@ -7,11 +7,36 @@ const { listTools, getTool, getDatabaseInfo } = require("./lib/tool-registry-db"
 const { enqueue, getJob, getQueueInfo, getQueueHealth } = require("./lib/job-queue");
 const { PDF_JOB_TYPES, PDF_WORKER_JOB_TYPES } = require("./lib/job-contract");
 const { getArtifactStoreInfo, createJobKey, createUploadUrl, createDownloadUrl, getArtifactMetadata, deleteArtifact } = require("./lib/artifact-store");
-const { randomUUID } = require("crypto");
+const { randomUUID, randomBytes, createHash, timingSafeEqual } = require("crypto");
 
 const APP_VERSION = "2.2.2";
 const SITE_URL = "https://toolkitpro-v-0-1.onrender.com";
 const CACHE_TTL_MS = 60_000;
+const JOB_TOKEN_BYTES = Math.max(Number(process.env.PDF_JOB_TOKEN_BYTES) || 32, 16);
+
+function issueJobToken() {
+  return randomBytes(JOB_TOKEN_BYTES).toString("base64url");
+}
+function hashJobToken(token) {
+  return createHash("sha256").update(String(token)).digest("hex");
+}
+function getBearerToken(req) {
+  const value = String(req.get("authorization") || "");
+  return /^Bearer\s+\S+$/i.test(value) ? value.replace(/^Bearer\s+/i, "") : "";
+}
+function tokenMatches(job, token) {
+  if (!job?.ownerTokenHash || !token) return false;
+  const expected = Buffer.from(String(job.ownerTokenHash), "hex");
+  const actual = Buffer.from(hashJobToken(token), "hex");
+  return expected.length === actual.length && timingSafeEqual(expected, actual);
+}
+function requireJobToken(req, res, job) {
+  if (!tokenMatches(job, getBearerToken(req))) {
+    res.status(403).json({success:false,error:"Invalid job token"});
+    return false;
+  }
+  return true;
+}
 
 const app = express();
 const PORT = Number(process.env.PORT) || 3000;
@@ -172,11 +197,12 @@ app.post("/api/pdf/jobs/prepare", rateLimit(PDF_PREPARE_LIMIT, "pdf-prepare"), a
     const store = getArtifactStoreInfo();
     if (!store.configured || store.mode !== "s3") return res.status(503).json({success:false,error:"Object storage is not configured"});
     const jobId = randomUUID();
+    const jobToken = issueJobToken();
     const filename = String(req.body?.filename || "input.pdf");
     const contentType = String(req.body?.contentType || "application/pdf");
     const key = createJobKey(jobId, filename);
     const uploadUrl = await createUploadUrl(key, contentType);
-    res.status(201).json({success:true,job:{id:jobId,status:"created"},artifact:{key,uploadUrl,expiresInSeconds:store.signedUrlTtlSeconds,contentType}});
+    res.status(201).json({success:true,job:{id:jobId,status:"created",token:jobToken},artifact:{key,uploadUrl,expiresInSeconds:store.signedUrlTtlSeconds,contentType}});
   } catch (error) {
     console.error("PDF upload preparation failed:", error.message);
     res.status(503).json({success:false,error:"Object storage unavailable"});
@@ -187,6 +213,8 @@ app.post("/api/pdf/jobs/:id/complete", rateLimit(PDF_COMPLETE_LIMIT, "pdf-comple
   try {
     const jobId = String(req.params.id || "");
     const type = String(req.body?.type || "").trim();
+    const jobToken = getBearerToken(req);
+    if (!jobToken) return res.status(401).json({success:false,error:"Job token required"});
     if (!PDF_WORKER_JOB_TYPES.has(type)) return res.status(400).json({success:false,error:"PDF operation is not currently available"});
     const key = String(req.body?.inputKey || "");
     if (!key.startsWith("uploads/" + jobId + "/") || key.includes("..")) return res.status(400).json({success:false,error:"Invalid input artifact"});
@@ -197,7 +225,7 @@ app.post("/api/pdf/jobs/:id/complete", rateLimit(PDF_COMPLETE_LIMIT, "pdf-comple
     if (metadata.size > 25 * 1024 * 1024) return res.status(413).json({success:false,error:"PDF exceeds 25 MB"});
     const outputKey = "outputs/" + jobId + "/result.pdf";
     const payload = {input:[{key,size:metadata.size}],output:{key:outputKey,size:0},options:req.body?.options && typeof req.body.options === "object" && !Array.isArray(req.body.options) ? req.body.options : {}};
-    const job = await enqueue(type, payload, {id:jobId});
+    const job = await enqueue(type, payload, {id:jobId, ownerTokenHash:hashJobToken(jobToken)});
     res.status(202).json({success:true,job:{id:job.id,type:job.type,status:job.status,createdAt:job.createdAt},output:{key:outputKey}});
   } catch (error) {
     console.error("PDF job enqueue failed:", error.message);
@@ -211,7 +239,7 @@ app.delete("/api/pdf/jobs/:id/artifacts", rateLimit(PDF_CLEANUP_LIMIT, "pdf-clea
     const jobId = String(req.params.id || "");
     if (!/^[a-f0-9-]{20,64}$/i.test(jobId)) return res.status(400).json({success:false,error:"Invalid job id"});
     const job = await getJob(jobId);
-    if (!job || !PDF_JOB_TYPES.has(job.type)) return res.status(404).json({success:false,error:"PDF job not found"});
+    if (!job || !PDF_JOB_TYPES.has(job.type) || !requireJobToken(req,res,job)) return res.status(404).json({success:false,error:"PDF job not found"});
     if (!["completed","failed"].includes(job.status)) return res.status(409).json({success:false,error:"Artifacts can only be cleaned after job completion or failure"});
 
     const keys = [
@@ -249,7 +277,7 @@ app.get("/api/pdf/artifacts/download", rateLimit(PDF_DOWNLOAD_LIMIT, "pdf-downlo
     const expected = "outputs/" + jobId + "/result.pdf";
     if (!/^[a-f0-9-]{20,64}$/i.test(jobId) || key !== expected) return res.status(400).json({success:false,error:"Invalid output artifact"});
     const job = await getJob(jobId);
-    if (!job || !PDF_JOB_TYPES.has(job.type) || job.status !== "completed" || job.payload?.output?.key !== key) return res.status(404).json({success:false,error:"Output artifact not available"});
+    if (!job || !PDF_JOB_TYPES.has(job.type) || !requireJobToken(req,res,job) || job.status !== "completed" || job.payload?.output?.key !== key) return res.status(404).json({success:false,error:"Output artifact not available"});
     const url = await createDownloadUrl(key);
     if (!url) return res.status(503).json({success:false,error:"Object storage unavailable"});
     res.json({success:true,url,expiresInSeconds:getArtifactStoreInfo().signedUrlTtlSeconds});
@@ -273,6 +301,7 @@ app.post("/api/jobs",async (req,res) => {
 app.get("/api/jobs/:id",async (req,res) => {
   const job=await getJob(req.params.id);
   if(!job) return res.status(404).json({success:false,error:"Job not found"});
+  if (PDF_JOB_TYPES.has(job.type) && !requireJobToken(req,res,job)) return;
   res.set("Cache-Control","no-store").json({success:true,job});
 });
 
